@@ -125,9 +125,11 @@ export function TransactionsView({
                   {t.enteredBy && <span className="text-[10px] text-gray-400">{t.enteredBy}</span>}
                   <MoneyAmount
                     value={t.amount}
-                    forceNegative={t.type === "expense"}
-                    showPlusSign={t.type === "income"}
-                    className="text-sm font-medium text-gray-900 dark:text-gray-100"
+                    className={`text-sm font-medium ${
+                      t.type === "income"
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-gray-900 dark:text-gray-100"
+                    }`}
                   />
                 </div>
               </button>
