@@ -6,6 +6,7 @@ import { PerforatedDivider } from "./PerforatedDivider";
 import { FixedExpenseList } from "./FixedExpenseList";
 import { RecentTransactionList } from "./RecentTransactionList";
 import { AssetProgressCard } from "./AssetProgressCard";
+import { CategoryBudgetList } from "./CategoryBudgetList";
 import { useTransactionModal } from "@/components/transaction/TransactionModalProvider";
 import type { DashboardData } from "@/types/dashboard";
 
@@ -27,6 +28,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
       <FixedExpenseList items={data.fixedExpenses} />
       <RecentTransactionList items={data.recentTransactions} />
       <AssetProgressCard assets={data.assets} />
+      <CategoryBudgetList items={data.categoryBudgets} />
 
       <button
         type="button"

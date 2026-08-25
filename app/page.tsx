@@ -18,6 +18,13 @@ interface TransactionRow {
   is_fixed: boolean;
   memo: string | null;
   date: string;
+  category_id: string | null;
+  category: CategoryRef | null;
+}
+
+interface BudgetRow {
+  category_id: string;
+  amount_limit: number;
   category: CategoryRef | null;
 }
 
@@ -36,14 +43,18 @@ interface AssetRow {
   current_amount: number;
 }
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return <LoginRequired />;
+    return <LoginRequired error={searchParams.auth_error === "1"} />;
   }
 
   const { start, end, year, month } = getCurrentMonthRange();
@@ -60,10 +71,10 @@ export default async function HomePage() {
     });
   }
 
-  const [transactionsRes, recurringRes, assetsRes, membersRes] = await Promise.all([
+  const [transactionsRes, recurringRes, assetsRes, membersRes, budgetsRes] = await Promise.all([
     supabase
       .from("transactions")
-      .select("id, amount, type, is_fixed, memo, date, category:categories(name, icon, color)")
+      .select("id, amount, type, is_fixed, memo, date, category_id, category:categories(name, icon, color)")
       .gte("date", start)
       .lt("date", end)
       .order("date", { ascending: false })
@@ -80,6 +91,11 @@ export default async function HomePage() {
       .select("id, name, type, target_amount, current_amount")
       .returns<AssetRow[]>(),
     supabase.from("household_members").select("display_name"),
+    supabase
+      .from("budgets")
+      .select("category_id, amount_limit, category:categories(name, icon, color)")
+      .eq("month", start)
+      .returns<BudgetRow[]>(),
   ]);
 
   const transactions = transactionsRes.data ?? [];
@@ -90,6 +106,21 @@ export default async function HomePage() {
     membersRes.data && membersRes.data.length > 0
       ? membersRes.data.map((m) => m.display_name).join(" · ")
       : "MoneyLog";
+
+  const spentByCategory = new Map<string, number>();
+  for (const t of transactions) {
+    if (t.type !== "expense" || !t.category_id) continue;
+    spentByCategory.set(t.category_id, (spentByCategory.get(t.category_id) ?? 0) + t.amount);
+  }
+
+  const categoryBudgets = (budgetsRes.data ?? [])
+    .filter((b): b is BudgetRow & { category: CategoryRef } => b.category !== null)
+    .map((b) => ({
+      categoryId: b.category_id,
+      category: b.category,
+      spent: spentByCategory.get(b.category_id) ?? 0,
+      limit: b.amount_limit,
+    }));
 
   const data: DashboardData = {
     monthLabel: `${year}년 ${month}월`,
@@ -120,6 +151,7 @@ export default async function HomePage() {
       targetAmount: a.target_amount,
       currentAmount: a.current_amount,
     })),
+    categoryBudgets,
   };
 
   return <DashboardView data={data} />;

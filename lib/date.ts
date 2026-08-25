@@ -44,3 +44,24 @@ export function clampDayOfMonth(year: number, month: number, dayOfMonth: number)
   const lastDay = new Date(year, month, 0).getDate();
   return Math.min(dayOfMonth, lastDay);
 }
+
+// 리포트 화면의 월 이동(이전/다음 달)처럼 임의의 연/월에 대한 조회 범위가 필요할 때 사용.
+export interface MonthRange {
+  start: string; // YYYY-MM-01
+  end: string; // 다음 달 1일, exclusive
+}
+
+export function getMonthRange(year: number, month: number): MonthRange {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const start = `${year}-${pad(month)}-01`;
+  const nextMonth = month === 12 ? 1 : month + 1;
+  const nextYear = month === 12 ? year + 1 : year;
+  const end = `${nextYear}-${pad(nextMonth)}-01`;
+  return { start, end };
+}
+
+// month를 delta개월만큼 이동한 연/월을 반환 (delta는 음수 가능).
+export function shiftMonth(year: number, month: number, delta: number): { year: number; month: number } {
+  const zeroBased = year * 12 + (month - 1) + delta;
+  return { year: Math.floor(zeroBased / 12), month: (zeroBased % 12) + 1 };
+}

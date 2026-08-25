@@ -32,6 +32,20 @@ const SAMPLE_DATA: DashboardData = {
     { id: "1", name: "전세자금대출", type: "loan", targetAmount: 100000000, currentAmount: 62000000 },
     { id: "2", name: "적금", type: "savings", targetAmount: 20000000, currentAmount: 8500000 },
   ],
+  categoryBudgets: [
+    {
+      categoryId: "1",
+      category: { name: "식비", icon: "UtensilsCrossed", color: "teal" },
+      spent: 420000,
+      limit: 500000,
+    },
+    {
+      categoryId: "2",
+      category: { name: "카페", icon: "Coffee", color: "amber" },
+      spent: 95000,
+      limit: 80000,
+    },
+  ],
 };
 
 export default function DevPreviewPage() {
