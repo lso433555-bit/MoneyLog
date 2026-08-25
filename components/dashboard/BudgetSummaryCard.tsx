@@ -22,10 +22,9 @@ export function BudgetSummaryCard({
   return (
     <section className="ml-card p-6 lg:flex lg:items-center lg:gap-10 lg:p-8">
       <div className="lg:flex-1">
-        <div className="flex items-baseline justify-between">
-          <span className="text-sm font-medium text-gray-600">{monthLabel}</span>
-          <span className="text-sm text-gray-400">{householdLabel}</span>
-        </div>
+        <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+          {monthLabel} <span className="text-gray-400 dark:text-gray-500">· {householdLabel}</span>
+        </p>
 
         <p className="mt-3 break-all" aria-live="polite">
           <MoneyAmount
@@ -50,13 +49,13 @@ export function BudgetSummaryCard({
         <div className="rounded-xl bg-gray-50 p-4 dark:bg-gray-800">
           <p className="text-xs text-gray-500">수입</p>
           <p className="mt-1">
-            <MoneyAmount value={income} showPlusSign className="text-lg font-medium text-gray-900 dark:text-gray-100" />
+            <MoneyAmount value={income} className="text-lg font-medium text-green-600 dark:text-green-400" />
           </p>
         </div>
         <div className="rounded-xl bg-gray-50 p-4 dark:bg-gray-800">
           <p className="text-xs text-gray-500">지출</p>
           <p className="mt-1">
-            <MoneyAmount value={expense} forceNegative className="text-lg font-medium text-gray-900 dark:text-gray-100" />
+            <MoneyAmount value={expense} className="text-lg font-medium text-gray-900 dark:text-gray-100" />
           </p>
         </div>
       </div>
