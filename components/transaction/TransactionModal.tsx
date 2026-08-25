@@ -10,24 +10,37 @@ import { AmountKeypad } from "@/components/transaction/AmountKeypad";
 import type { CategoryOption } from "@/lib/categories";
 import type { TransactionType } from "@/types/database";
 
+export interface EditingTransaction {
+  id: string;
+  type: TransactionType;
+  amount: number;
+  categoryId: string | null;
+  date: string;
+  memo: string | null;
+  paymentMethod: string | null;
+  isFixed: boolean;
+}
+
 interface TransactionModalProps {
   initialType: TransactionType;
+  editing?: EditingTransaction | null;
   onClose: () => void;
 }
 
 const RECENT_LOOKBACK = 40;
 
-export function TransactionModal({ initialType, onClose }: TransactionModalProps) {
+export function TransactionModal({ initialType, editing = null, onClose }: TransactionModalProps) {
   const router = useRouter();
   const supabase = createClient();
 
-  const [type, setType] = useState<TransactionType>(initialType);
-  const [amountDigits, setAmountDigits] = useState("");
-  const [categoryId, setCategoryId] = useState<string | null>(null);
-  const [date, setDate] = useState(getKstTodayDateString());
-  const [memo, setMemo] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [isFixed, setIsFixed] = useState(false);
+  const [type, setType] = useState<TransactionType>(editing?.type ?? initialType);
+  const [amountDigits, setAmountDigits] = useState(editing ? String(editing.amount) : "");
+  const [categoryId, setCategoryId] = useState<string | null>(editing?.categoryId ?? null);
+  const [date, setDate] = useState(editing?.date ?? getKstTodayDateString());
+  const [memo, setMemo] = useState(editing?.memo ?? "");
+  const [paymentMethod, setPaymentMethod] = useState(editing?.paymentMethod ?? "");
+  const [isFixed, setIsFixed] = useState(editing?.isFixed ?? false);
+  const [deleting, setDeleting] = useState(false);
 
   const [categories, setCategories] = useState<CategoryOption[] | null>(null);
   // 타입(수입/지출)별로 최근 사용한 카테고리 id를 최신순으로 저장 — 카테고리 그리드 상단 노출용.
@@ -95,33 +108,72 @@ export function TransactionModal({ initialType, onClose }: TransactionModalProps
     setSubmitting(true);
     setError(null);
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    const { data: householdId } = await supabase.rpc("get_my_household_id");
+    if (editing) {
+      const { error: updateError } = await supabase
+        .from("transactions")
+        .update({
+          type,
+          category_id: categoryId,
+          amount: amountValue,
+          is_fixed: isFixed,
+          memo: memo.trim() || null,
+          payment_method: paymentMethod.trim() || null,
+          date,
+        })
+        .eq("id", editing.id);
 
-    if (!user || !householdId) {
-      setError("household 정보를 불러오지 못했어요. 새로고침 후 다시 시도해주세요.");
       setSubmitting(false);
-      return;
+      if (updateError) {
+        setError("저장에 실패했어요. 다시 시도해주세요.");
+        return;
+      }
+    } else {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { data: householdId } = await supabase.rpc("get_my_household_id");
+
+      if (!user || !householdId) {
+        setError("household 정보를 불러오지 못했어요. 새로고침 후 다시 시도해주세요.");
+        setSubmitting(false);
+        return;
+      }
+
+      const { error: insertError } = await supabase.from("transactions").insert({
+        household_id: householdId,
+        user_id: user.id,
+        type,
+        category_id: categoryId,
+        amount: amountValue,
+        is_fixed: isFixed,
+        memo: memo.trim() || null,
+        payment_method: paymentMethod.trim() || null,
+        date,
+      });
+
+      setSubmitting(false);
+      if (insertError) {
+        setError("저장에 실패했어요. 다시 시도해주세요.");
+        return;
+      }
     }
 
-    const { error: insertError } = await supabase.from("transactions").insert({
-      household_id: householdId,
-      user_id: user.id,
-      type,
-      category_id: categoryId,
-      amount: amountValue,
-      is_fixed: isFixed,
-      memo: memo.trim() || null,
-      payment_method: paymentMethod.trim() || null,
-      date,
-    });
+    router.refresh();
+    onClose();
+  }
 
-    setSubmitting(false);
+  async function handleDelete() {
+    if (!editing) return;
+    if (!window.confirm("이 거래를 삭제할까요?")) return;
 
-    if (insertError) {
-      setError("저장에 실패했어요. 다시 시도해주세요.");
+    setDeleting(true);
+    setError(null);
+
+    const { error: deleteError } = await supabase.from("transactions").delete().eq("id", editing.id);
+
+    setDeleting(false);
+    if (deleteError) {
+      setError("삭제에 실패했어요. 다시 시도해주세요.");
       return;
     }
 
@@ -140,7 +192,13 @@ export function TransactionModal({ initialType, onClose }: TransactionModalProps
       >
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900">
-            {type === "expense" ? "지출 추가" : "수입 추가"}
+            {editing
+              ? type === "expense"
+                ? "지출 수정"
+                : "수입 수정"
+              : type === "expense"
+                ? "지출 추가"
+                : "수입 추가"}
           </h2>
           <button
             type="button"
@@ -260,11 +318,22 @@ export function TransactionModal({ initialType, onClose }: TransactionModalProps
 
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || deleting}
             className="rounded-xl bg-gray-900 py-3.5 text-sm font-medium text-white transition-opacity disabled:opacity-50"
           >
             {submitting ? "저장 중..." : "저장"}
           </button>
+
+          {editing && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={submitting || deleting}
+              className="py-1 text-sm font-medium text-red-600 transition-opacity disabled:opacity-50"
+            >
+              {deleting ? "삭제 중..." : "이 거래 삭제"}
+            </button>
+          )}
         </form>
       </div>
     </div>

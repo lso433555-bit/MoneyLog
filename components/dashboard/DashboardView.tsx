@@ -14,7 +14,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
   const { openModal } = useTransactionModal();
 
   return (
-    <div className="mx-auto flex max-w-xl flex-col gap-6 px-4 py-6">
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-6 md:max-w-3xl">
       <BudgetSummaryCard
         monthLabel={data.monthLabel}
         householdLabel={data.householdLabel}

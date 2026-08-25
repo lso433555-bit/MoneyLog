@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { MonthNav } from "@/components/ui/MonthNav";
 import { ExpenseComparisonCard } from "./ExpenseComparisonCard";
 import { CategoryExpenseBars } from "./CategoryExpenseBars";
 import { TopIncreasesCallout } from "./TopIncreasesCallout";
@@ -32,27 +31,16 @@ export function ReportView({
   increases,
 }: ReportViewProps) {
   return (
-    <div className="mx-auto flex max-w-xl flex-col gap-6 px-4 py-6">
-      <div className="ml-card flex items-center justify-between p-4">
-        <Link href={prevHref} aria-label="이전 달" className="rounded-full p-2 text-gray-500 hover:bg-gray-100">
-          <ChevronLeft size={20} />
-        </Link>
-        <span className="text-base font-semibold text-gray-900">{monthLabel}</span>
-        {isNextDisabled ? (
-          <span aria-hidden className="rounded-full p-2 text-gray-200">
-            <ChevronRight size={20} />
-          </span>
-        ) : (
-          <Link href={nextHref} aria-label="다음 달" className="rounded-full p-2 text-gray-500 hover:bg-gray-100">
-            <ChevronRight size={20} />
-          </Link>
-        )}
-      </div>
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-6 md:max-w-3xl">
+      <MonthNav monthLabel={monthLabel} prevHref={prevHref} nextHref={nextHref} isNextDisabled={isNextDisabled} />
 
       <ExpenseComparisonCard totalThisMonth={totalThisMonth} totalLastMonth={totalLastMonth} />
       <CategoryExpenseBars items={categoryBreakdown} />
-      <TopIncreasesCallout items={increases} />
-      <FixedVariableBar fixedTotal={fixedTotal} variableTotal={variableTotal} />
+
+      <div className="flex flex-col gap-6 md:grid md:grid-cols-2">
+        <TopIncreasesCallout items={increases} />
+        <FixedVariableBar fixedTotal={fixedTotal} variableTotal={variableTotal} />
+      </div>
     </div>
   );
 }

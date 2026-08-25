@@ -65,3 +65,20 @@ export function shiftMonth(year: number, month: number, delta: number): { year: 
   const zeroBased = year * 12 + (month - 1) + delta;
   return { year: Math.floor(zeroBased / 12), month: (zeroBased % 12) + 1 };
 }
+
+// 리포트/전체 내역처럼 "?m=YYYY-MM" 쿼리로 월을 넘기는 화면들의 공통 파싱/포맷 헬퍼.
+export function parseMonthParam(m: string | string[] | undefined): { year: number; month: number } {
+  const value = Array.isArray(m) ? m[0] : m;
+  if (value && /^\d{4}-\d{2}$/.test(value)) {
+    const [yearStr, monthStr] = value.split("-");
+    const year = Number(yearStr);
+    const month = Number(monthStr);
+    if (month >= 1 && month <= 12) return { year, month };
+  }
+  const current = getCurrentMonthRange();
+  return { year: current.year, month: current.month };
+}
+
+export function formatMonthParam(year: number, month: number): string {
+  return `${year}-${String(month).padStart(2, "0")}`;
+}

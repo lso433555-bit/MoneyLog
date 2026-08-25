@@ -18,7 +18,7 @@ export function AssetProgressCard({ assets }: { assets: AssetItem[] }) {
   return (
     <section>
       <h2 className="mb-3 text-sm font-semibold text-gray-700">자산 현황</h2>
-      <div className="space-y-2">
+      <div className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0">
         {assets.map((asset) => {
           const progress = computeProgress(asset);
           return (

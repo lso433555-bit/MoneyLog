@@ -17,6 +17,7 @@ export interface RecentTransactionItem {
   amount: number;
   date: string;
   category: DashboardCategoryInfo | null;
+  enteredBy: string | null;
 }
 
 export interface AssetItem {

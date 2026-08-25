@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentMonthRange, getMonthRange, shiftMonth } from "@/lib/date";
+import { getCurrentMonthRange, getMonthRange, shiftMonth, parseMonthParam, formatMonthParam } from "@/lib/date";
 import { formatMonthLabel } from "@/lib/format";
+import { ensureRecurringForViewedMonth } from "@/lib/recurring";
 import { LoginRequired } from "@/components/ui/LoginRequired";
 import { ReportView } from "@/components/report/ReportView";
 import type { CategoryExpenseItem, CategoryIncreaseItem } from "@/types/report";
@@ -16,22 +17,6 @@ interface ThisMonthRow {
 interface LastMonthRow {
   amount: number;
   category_id: string | null;
-}
-
-function parseMonthParam(m: string | string[] | undefined): { year: number; month: number } {
-  const value = Array.isArray(m) ? m[0] : m;
-  if (value && /^\d{4}-\d{2}$/.test(value)) {
-    const [yearStr, monthStr] = value.split("-");
-    const year = Number(yearStr);
-    const month = Number(monthStr);
-    if (month >= 1 && month <= 12) return { year, month };
-  }
-  const current = getCurrentMonthRange();
-  return { year: current.year, month: current.month };
-}
-
-function monthParam(year: number, month: number): string {
-  return `${year}-${String(month).padStart(2, "0")}`;
 }
 
 export default async function ReportPage({
@@ -56,6 +41,9 @@ export default async function ReportPage({
 
   const current = getCurrentMonthRange();
   const isNextDisabled = year * 12 + month >= current.year * 12 + current.month;
+
+  // 실제 이번 달을 보고 있을 때만 내부적으로 자동생성 수행 (지난 달 조회 시엔 건드리지 않음).
+  await ensureRecurringForViewedMonth(supabase, { userId: user.id, year, month, monthStart: start, monthEnd: end });
 
   const [thisMonthRes, lastMonthRes] = await Promise.all([
     supabase
@@ -111,8 +99,8 @@ export default async function ReportPage({
   return (
     <ReportView
       monthLabel={formatMonthLabel(new Date(year, month - 1, 1))}
-      prevHref={`/report?m=${monthParam(prev.year, prev.month)}`}
-      nextHref={`/report?m=${monthParam(next.year, next.month)}`}
+      prevHref={`/report?m=${formatMonthParam(prev.year, prev.month)}`}
+      nextHref={`/report?m=${formatMonthParam(next.year, next.month)}`}
       isNextDisabled={isNextDisabled}
       totalThisMonth={totalThisMonth}
       totalLastMonth={totalLastMonth}

@@ -59,7 +59,7 @@ export function RecurringView({ initialTemplates, categories }: RecurringViewPro
   }
 
   return (
-    <div className="mx-auto flex max-w-xl flex-col gap-6 px-4 py-6">
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-6 md:max-w-3xl">
       <h1 className="text-lg font-semibold text-gray-900">고정지출</h1>
 
       <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1">
@@ -83,7 +83,7 @@ export function RecurringView({ initialTemplates, categories }: RecurringViewPro
           <p className="text-sm text-gray-400">등록된 {tab === "expense" ? "고정지출" : "고정수입"}이 없어요.</p>
         </div>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0">
           {items.map((item) => (
             <li key={item.id} className={`ml-card flex items-center gap-3 p-4 ${!item.isActive ? "opacity-50" : ""}`}>
               <CategoryBadge icon={item.category?.icon ?? ""} color={item.category?.color ?? "gray"} />
@@ -93,12 +93,7 @@ export function RecurringView({ initialTemplates, categories }: RecurringViewPro
                   매월 {item.dayOfMonth}일 · {item.category?.name ?? "미분류"}
                 </p>
               </div>
-              <MoneyAmount
-                value={item.amount}
-                forceNegative={item.type === "expense"}
-                showPlusSign={item.type === "income"}
-                className="text-sm font-medium text-gray-900"
-              />
+              <MoneyAmount value={item.amount} className="text-sm font-medium text-gray-900" />
               <div className="flex items-center gap-1">
                 <button
                   type="button"

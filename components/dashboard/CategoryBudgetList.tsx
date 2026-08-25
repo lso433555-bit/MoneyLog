@@ -18,7 +18,7 @@ export function CategoryBudgetList({ items }: { items: CategoryBudgetItem[] }) {
   return (
     <section>
       <h2 className="mb-3 text-sm font-semibold text-gray-700">카테고리별 예산</h2>
-      <div className="space-y-2">
+      <div className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0">
         {items.map((item) => {
           const status = getBudgetStatus(item.spent, item.limit);
           const progress = item.limit > 0 ? Math.min(100, Math.round((item.spent / item.limit) * 100)) : 0;
@@ -35,7 +35,7 @@ export function CategoryBudgetList({ items }: { items: CategoryBudgetItem[] }) {
                   {status === "over" && <p className="text-xs font-medium text-red-600">예산 초과</p>}
                 </div>
                 <p aria-live={status === "over" ? "polite" : undefined} className={`text-sm font-medium ${amountColor}`}>
-                  <MoneyAmount value={item.spent} forceNegative />
+                  <MoneyAmount value={item.spent} />
                   <span className="text-gray-400"> / </span>
                   <MoneyAmount value={item.limit} className="text-gray-500" />
                   {status === "over" && <span className="sr-only"> 예산을 초과했습니다</span>}

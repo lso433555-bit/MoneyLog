@@ -29,14 +29,14 @@ export function FixedVariableBar({ fixedTotal, variableTotal }: { fixedTotal: nu
           <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-gray-900" />
           고정 {pctFixed}%
         </span>
-        <MoneyAmount value={fixedTotal} forceNegative className="text-gray-500" />
+        <MoneyAmount value={fixedTotal} className="text-gray-500" />
       </div>
       <div className="mt-1 flex items-center justify-between text-sm">
         <span className="flex items-center gap-2 text-gray-700">
           <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-coral-500" />
           유동 {pctVariable}%
         </span>
-        <MoneyAmount value={variableTotal} forceNegative className="text-gray-500" />
+        <MoneyAmount value={variableTotal} className="text-gray-500" />
       </div>
     </section>
   );

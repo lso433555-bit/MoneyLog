@@ -21,7 +21,7 @@ export function CategoryExpenseBars({ items }: { items: CategoryExpenseItem[] })
   return (
     <section>
       <h2 className="mb-3 text-sm font-semibold text-gray-700">카테고리별 지출</h2>
-      <div className="space-y-2">
+      <div className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0">
         {items.map((item) => {
           const width = maxAmount > 0 ? Math.max(4, Math.round((item.amount / maxAmount) * 100)) : 0;
           return (
@@ -29,7 +29,7 @@ export function CategoryExpenseBars({ items }: { items: CategoryExpenseItem[] })
               <div className="flex items-center gap-3">
                 <CategoryBadge icon={item.category.icon} color={item.category.color} size="sm" />
                 <span className="min-w-0 flex-1 truncate text-sm font-medium text-gray-900">{item.category.name}</span>
-                <MoneyAmount value={item.amount} forceNegative className="text-sm font-medium text-gray-900" />
+                <MoneyAmount value={item.amount} className="text-sm font-medium text-gray-900" />
               </div>
               <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-gray-100">
                 <div

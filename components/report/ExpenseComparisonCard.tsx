@@ -27,7 +27,7 @@ export function ExpenseComparisonCard({
     <section className="ml-card p-6">
       <p className="text-sm text-gray-500">이번 달 총지출</p>
       <p className="mt-1">
-        <MoneyAmount value={totalThisMonth} forceNegative className="text-3xl font-semibold text-gray-900" />
+        <MoneyAmount value={totalThisMonth} className="text-3xl font-semibold text-gray-900" />
       </p>
       <div className={`mt-2 flex flex-wrap items-center gap-1.5 text-sm font-medium ${color}`}>
         <Icon size={16} />
@@ -39,7 +39,7 @@ export function ExpenseComparisonCard({
             : `${Math.abs(Math.round(pct))}% ${direction === "up" ? "증가" : direction === "down" ? "감소" : "변화 없음"}`}
         </span>
         <span className="font-normal text-gray-400">
-          · 지난달 <MoneyAmount value={totalLastMonth} forceNegative className="text-gray-400" />
+          · 지난달 <MoneyAmount value={totalLastMonth} className="text-gray-400" />
         </span>
       </div>
     </section>

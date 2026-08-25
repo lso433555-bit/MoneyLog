@@ -4,7 +4,6 @@ import { useState, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { CategoryBadge } from "@/components/dashboard/CategoryBadge";
-import { SignOutButton } from "./SignOutButton";
 import type { CategoryOption } from "@/lib/categories";
 
 interface BudgetSettingsViewProps {
@@ -12,16 +11,9 @@ interface BudgetSettingsViewProps {
   month: string; // YYYY-MM-01, budgets.month과 매칭
   categories: CategoryOption[];
   initialBudgets: Record<string, number>;
-  userEmail: string;
 }
 
-export function BudgetSettingsView({
-  monthLabel,
-  month,
-  categories,
-  initialBudgets,
-  userEmail,
-}: BudgetSettingsViewProps) {
+export function BudgetSettingsView({ monthLabel, month, categories, initialBudgets }: BudgetSettingsViewProps) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -92,14 +84,12 @@ export function BudgetSettingsView({
   }
 
   return (
-    <div className="mx-auto flex max-w-xl flex-col gap-6 px-4 py-6">
-      <h1 className="text-lg font-semibold text-gray-900">설정</h1>
-
+    <>
       <section>
         <h2 className="mb-1 text-sm font-semibold text-gray-700">카테고리별 예산</h2>
         <p className="mb-3 text-xs text-gray-400">{monthLabel} 기준. 비워두면 예산을 적용하지 않아요.</p>
 
-        <ul className="space-y-2">
+        <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0">
           {categories.map((cat) => (
             <li key={cat.id} className="ml-card flex items-center gap-3 p-4">
               <CategoryBadge icon={cat.icon} color={cat.color} size="sm" />
@@ -130,14 +120,6 @@ export function BudgetSettingsView({
       >
         {submitting ? "저장 중..." : saved ? "저장됨" : "저장"}
       </button>
-
-      <section className="ml-card flex items-center justify-between p-4">
-        <div>
-          <p className="text-xs text-gray-400">로그인 계정</p>
-          <p className="text-sm text-gray-700">{userEmail}</p>
-        </div>
-        <SignOutButton />
-      </section>
-    </div>
+    </>
   );
 }

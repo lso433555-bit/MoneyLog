@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMonthRange } from "@/lib/date";
-import { ensureRecurringTransactionsForMonth } from "@/lib/recurring";
+import { ensureRecurringForViewedMonth } from "@/lib/recurring";
 import { DashboardView } from "@/components/dashboard/DashboardView";
 import { LoginRequired } from "@/components/ui/LoginRequired";
 import type { DashboardData } from "@/types/dashboard";
@@ -19,6 +19,7 @@ interface TransactionRow {
   memo: string | null;
   date: string;
   category_id: string | null;
+  user_id: string;
   category: CategoryRef | null;
 }
 
@@ -59,22 +60,12 @@ export default async function HomePage({
 
   const { start, end, year, month } = getCurrentMonthRange();
 
-  const { data: householdId } = await supabase.rpc("get_my_household_id");
-  if (householdId) {
-    await ensureRecurringTransactionsForMonth(supabase, {
-      householdId,
-      userId: user.id,
-      year,
-      month,
-      monthStart: start,
-      monthEnd: end,
-    });
-  }
+  await ensureRecurringForViewedMonth(supabase, { userId: user.id, year, month, monthStart: start, monthEnd: end });
 
   const [transactionsRes, recurringRes, assetsRes, membersRes, budgetsRes] = await Promise.all([
     supabase
       .from("transactions")
-      .select("id, amount, type, is_fixed, memo, date, category_id, category:categories(name, icon, color)")
+      .select("id, amount, type, is_fixed, memo, date, category_id, user_id, category:categories(name, icon, color)")
       .gte("date", start)
       .lt("date", end)
       .order("date", { ascending: false })
@@ -90,7 +81,7 @@ export default async function HomePage({
       .from("assets")
       .select("id, name, type, target_amount, current_amount")
       .returns<AssetRow[]>(),
-    supabase.from("household_members").select("display_name"),
+    supabase.from("household_members").select("user_id, display_name"),
     supabase
       .from("budgets")
       .select("category_id, amount_limit, category:categories(name, icon, color)")
@@ -106,6 +97,11 @@ export default async function HomePage({
     membersRes.data && membersRes.data.length > 0
       ? membersRes.data.map((m) => m.display_name).join(" · ")
       : "MoneyLog";
+
+  // household 인원이 2명뿐일 때만 "누가 입력했는지"가 유용한 정보라 표시한다 —
+  // 1인 가구면 굳이 본인 이름을 매 항목마다 반복해서 보여줄 필요가 없다.
+  const memberNameById = new Map((membersRes.data ?? []).map((m) => [m.user_id, m.display_name]));
+  const showEnteredBy = memberNameById.size > 1;
 
   const spentByCategory = new Map<string, number>();
   for (const t of transactions) {
@@ -143,6 +139,7 @@ export default async function HomePage({
         amount: t.amount,
         date: t.date,
         category: t.category,
+        enteredBy: showEnteredBy ? (memberNameById.get(t.user_id) ?? null) : null,
       })),
     assets: (assetsRes.data ?? []).map((a) => ({
       id: a.id,

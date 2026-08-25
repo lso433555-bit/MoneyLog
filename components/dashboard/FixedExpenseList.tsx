@@ -13,7 +13,7 @@ export function FixedExpenseList({ items }: { items: FixedExpenseItem[] }) {
           <p className="text-sm text-gray-400">등록된 고정지출이 없어요.</p>
         </div>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0">
           {items.map((item) => (
             <li key={item.id} className="ml-card flex items-center gap-3 p-4">
               <CategoryBadge icon={item.category?.icon ?? ""} color={item.category?.color ?? "gray"} />
@@ -21,7 +21,7 @@ export function FixedExpenseList({ items }: { items: FixedExpenseItem[] }) {
                 <p className="truncate text-sm font-medium text-gray-900">{item.name}</p>
                 <p className="truncate text-xs text-gray-500">{item.category?.name ?? "미분류"}</p>
               </div>
-              <MoneyAmount value={item.amount} forceNegative className="text-sm font-medium text-gray-900" />
+              <MoneyAmount value={item.amount} className="text-sm font-medium text-gray-900" />
             </li>
           ))}
         </ul>

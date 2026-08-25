@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
-import { clampDayOfMonth } from "@/lib/date";
+import { clampDayOfMonth, getCurrentMonthRange } from "@/lib/date";
 
 interface EnsureRecurringParams {
   householdId: string;
@@ -52,4 +52,28 @@ export async function ensureRecurringTransactionsForMonth(
   }));
 
   await supabase.from("transactions").insert(rows);
+}
+
+interface EnsureForViewedMonthParams {
+  userId: string;
+  year: number;
+  month: number;
+  monthStart: string;
+  monthEnd: string;
+}
+
+// 홈/리포트처럼 "특정 연/월"을 보여주는 화면에서 공통으로 쓰는 진입점.
+// 실제 이번 달을 보고 있을 때만 자동생성을 수행한다 — 리포트에서 지난 달을 조회할 때
+// 그 시점 기록을 건드리면 안 되기 때문에, 이 판단을 호출부마다 반복하지 않도록 여기서 한 번에 처리한다.
+export async function ensureRecurringForViewedMonth(
+  supabase: SupabaseClient<Database>,
+  { userId, year, month, monthStart, monthEnd }: EnsureForViewedMonthParams
+): Promise<void> {
+  const current = getCurrentMonthRange();
+  if (year !== current.year || month !== current.month) return;
+
+  const { data: householdId } = await supabase.rpc("get_my_household_id");
+  if (!householdId) return;
+
+  await ensureRecurringTransactionsForMonth(supabase, { householdId, userId, year, month, monthStart, monthEnd });
 }

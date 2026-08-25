@@ -4,6 +4,8 @@ import "./globals.css";
 import { Sidebar } from "@/components/nav/Sidebar";
 import { BottomTabBar } from "@/components/nav/BottomTabBar";
 import { TransactionModalProvider } from "@/components/transaction/TransactionModalProvider";
+import { createClient } from "@/lib/supabase/server";
+import { getRemainingBudgetSummary } from "@/lib/budget-summary";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,18 +34,24 @@ export const viewport: Viewport = {
   themeColor: "#F9633F",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const remainingBudget = user ? await getRemainingBudgetSummary(supabase) : null;
+
   return (
     <html lang="ko">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <TransactionModalProvider>
-          <Sidebar />
+          <Sidebar remainingBudget={remainingBudget} />
           <main className="pb-24 md:pb-0 md:pl-56">{children}</main>
           <BottomTabBar />
         </TransactionModalProvider>
