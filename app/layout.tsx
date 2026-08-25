@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Sidebar } from "@/components/nav/Sidebar";
@@ -19,6 +19,17 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "MoneyLog",
   description: "성완・예은 부부 공용 가계부",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "MoneyLog",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#F9633F",
 };
 
 export default function RootLayout({

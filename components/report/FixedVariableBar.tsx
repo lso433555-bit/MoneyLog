@@ -2,7 +2,15 @@ import { MoneyAmount } from "@/components/dashboard/MoneyAmount";
 
 export function FixedVariableBar({ fixedTotal, variableTotal }: { fixedTotal: number; variableTotal: number }) {
   const total = fixedTotal + variableTotal;
-  if (total <= 0) return null;
+
+  if (total <= 0) {
+    return (
+      <section className="ml-card p-4">
+        <h2 className="mb-2 text-sm font-semibold text-gray-700">고정 · 유동 지출 비율</h2>
+        <p className="text-sm text-gray-400">이번 달 지출 내역이 없어요.</p>
+      </section>
+    );
+  }
 
   const pctFixed = Math.round((fixedTotal / total) * 100);
   const pctVariable = 100 - pctFixed;

@@ -22,11 +22,11 @@ export function BudgetSummaryCard({
         <span className="text-sm text-gray-400">{householdLabel}</span>
       </div>
 
-      <p className="mt-3" aria-live="polite">
+      <p className="mt-3 break-all" aria-live="polite">
         <MoneyAmount
           value={remainingBudget}
           warnOnNegative
-          className="text-4xl font-semibold text-gray-900 sm:text-5xl"
+          className="text-3xl font-semibold text-gray-900 sm:text-4xl md:text-5xl"
         />
         {remainingBudget < 0 && <span className="sr-only"> 예산을 초과했습니다</span>}
       </p>

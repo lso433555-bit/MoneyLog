@@ -18,6 +18,10 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  /* 좁은 화면(아이폰 SE 등)에서 큰 금액 텍스트가 살짝 넘칠 때 가로 스크롤바가
+     생기는 걸 막는 안전장치 — 개별 요소는 각자 break-all/truncate로 처리하고,
+     이건 마지막 방어선. */
+  overflow-x: hidden;
 }
 
 @layer utilities {
