@@ -87,19 +87,24 @@ export default async function ReportPage({
   const fixedTotal = thisMonth.filter((t) => t.is_fixed).reduce((sum, t) => sum + t.amount, 0);
   const variableTotal = totalThisMonth - fixedTotal;
 
+  // 카테고리 없는 거래도 "미분류"로 묶어서 넣는다 — 안 그러면 카테고리별 합계가 총지출과 안 맞음.
+  const UNCATEGORIZED_KEY = "uncategorized";
+  const UNCATEGORIZED_INFO: DashboardCategoryInfo = { name: "미분류", icon: "", color: "gray" };
+
   const categoryMap = new Map<string, CategoryExpenseItem>();
   for (const t of thisMonth) {
-    if (!t.category_id || !t.category) continue;
-    const existing = categoryMap.get(t.category_id);
+    const key = t.category_id ?? UNCATEGORIZED_KEY;
+    const info = t.category_id && t.category ? t.category : UNCATEGORIZED_INFO;
+    const existing = categoryMap.get(key);
     if (existing) existing.amount += t.amount;
-    else categoryMap.set(t.category_id, { categoryId: t.category_id, category: t.category, amount: t.amount });
+    else categoryMap.set(key, { categoryId: key, category: info, amount: t.amount });
   }
   const categoryBreakdown = Array.from(categoryMap.values()).sort((a, b) => b.amount - a.amount);
 
   const lastMonthByCategory = new Map<string, number>();
   for (const t of lastMonth) {
-    if (!t.category_id) continue;
-    lastMonthByCategory.set(t.category_id, (lastMonthByCategory.get(t.category_id) ?? 0) + t.amount);
+    const key = t.category_id ?? UNCATEGORIZED_KEY;
+    lastMonthByCategory.set(key, (lastMonthByCategory.get(key) ?? 0) + t.amount);
   }
 
   const trendByKey = new Map<string, number>();

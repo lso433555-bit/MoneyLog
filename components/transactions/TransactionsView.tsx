@@ -110,7 +110,7 @@ export function TransactionsView({
                 onClick={() => setEditing(t)}
                 className="ml-card flex w-full items-center gap-3 p-4 text-left"
               >
-                <CategoryBadge icon={t.category?.icon ?? ""} color={t.category?.color ?? "gray"} />
+                <CategoryBadge icon={t.category?.icon ?? ""} color={t.category?.color ?? "gray"} size="sm" />
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-1.5 truncate text-sm font-medium text-gray-900 dark:text-gray-100">
                     {t.memo || t.category?.name || (t.type === "income" ? "수입" : "지출")}

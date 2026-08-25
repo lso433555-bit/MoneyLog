@@ -13,14 +13,14 @@ export function MonthlyTrendChart({ points }: { points: MonthlyTrendPoint[] }) {
       ) : (
         <div className="flex items-end justify-between gap-2">
           {points.map((p, i) => {
-            const heightPct = Math.max(4, Math.round((p.total / max) * 100));
+            const heightPct = p.total > 0 ? Math.max(4, Math.round((p.total / max) * 100)) : 0;
             const isViewed = i === points.length - 1;
             return (
               <div key={`${p.year}-${p.month}`} className="flex flex-1 flex-col items-center gap-1.5">
                 <span className="text-[10px] font-medium tabular-nums text-gray-500">
                   {p.total > 0 ? formatCompactKRWManwon(p.total) : ""}
                 </span>
-                <div className="flex h-24 w-full items-end justify-center">
+                <div className="flex h-24 w-full items-end justify-center border-b border-gray-200 dark:border-gray-800">
                   <div
                     className={`w-6 rounded-t-md transition-[height] duration-300 ${
                       isViewed ? "bg-coral-500" : "bg-gray-200 dark:bg-gray-700"

@@ -12,7 +12,7 @@ import {
   Gift,
   Gamepad2,
   MoreHorizontal,
-  Circle,
+  HelpCircle,
   type LucideIcon,
 } from "lucide-react";
 
@@ -35,5 +35,5 @@ export const CATEGORY_ICONS: Record<string, LucideIcon> = {
 };
 
 export function getCategoryIcon(iconName: string | null | undefined): LucideIcon {
-  return (iconName && CATEGORY_ICONS[iconName]) || Circle;
+  return (iconName && CATEGORY_ICONS[iconName]) || HelpCircle;
 }

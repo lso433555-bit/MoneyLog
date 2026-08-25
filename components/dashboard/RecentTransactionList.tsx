@@ -26,7 +26,7 @@ export function RecentTransactionList({ items }: { items: RecentTransactionItem[
         <ul className="space-y-2 lg:grid lg:grid-cols-2 lg:gap-2 lg:space-y-0">
           {items.map((item) => (
             <li key={item.id} className="ml-card flex items-center gap-3 p-4">
-              <CategoryBadge icon={item.category?.icon ?? ""} color={item.category?.color ?? "gray"} />
+              <CategoryBadge icon={item.category?.icon ?? ""} color={item.category?.color ?? "gray"} size="sm" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
                   {item.memo || item.category?.name || "지출"}

@@ -30,7 +30,7 @@ export function BudgetSummaryCard({
           <MoneyAmount
             value={remainingBudget}
             warnOnNegative
-            className="text-3xl font-semibold text-gray-900 dark:text-gray-100 sm:text-4xl md:text-5xl"
+            className="text-3xl font-semibold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl md:text-5xl"
           />
           {remainingBudget < 0 && <span className="sr-only"> 예산을 초과했습니다</span>}
         </p>

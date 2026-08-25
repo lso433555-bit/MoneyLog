@@ -88,7 +88,7 @@ export function RecurringView({ initialTemplates, categories }: RecurringViewPro
         <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
           {items.map((item) => (
             <li key={item.id} className={`ml-card flex items-center gap-3 p-4 ${!item.isActive ? "opacity-50" : ""}`}>
-              <CategoryBadge icon={item.category?.icon ?? ""} color={item.category?.color ?? "gray"} />
+              <CategoryBadge icon={item.category?.icon ?? ""} color={item.category?.color ?? "gray"} size="sm" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">{item.name}</p>
                 <p className="truncate text-xs text-gray-500">

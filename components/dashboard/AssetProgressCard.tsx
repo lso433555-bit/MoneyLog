@@ -1,3 +1,4 @@
+import { Landmark, PiggyBank } from "lucide-react";
 import { MoneyAmount } from "./MoneyAmount";
 import type { AssetItem } from "@/types/dashboard";
 
@@ -37,11 +38,20 @@ export function AssetProgressCard({ assets }: { assets: AssetItem[] }) {
       <div className="space-y-2">
         {assets.map((asset) => {
           const progress = computeProgress(asset);
+          const Icon = asset.type === "loan" ? Landmark : PiggyBank;
+          const badgeClass =
+            asset.type === "loan"
+              ? "bg-coral-100 text-coral-600"
+              : "bg-teal-100 text-teal-600";
+
           return (
             <div key={asset.id} className="ml-card p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{asset.name}</p>
+              <div className="flex items-center gap-3">
+                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${badgeClass}`}>
+                  <Icon size={16} strokeWidth={2} />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">{asset.name}</p>
                   <p className="text-xs text-gray-500">{asset.type === "loan" ? "대출" : "적금"}</p>
                 </div>
                 <p className="font-mono text-sm font-medium tabular-nums text-gray-700 dark:text-gray-300">
