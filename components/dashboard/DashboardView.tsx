@@ -14,7 +14,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
   const { openModal } = useTransactionModal();
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-6 md:max-w-3xl xl:max-w-5xl">
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-6 lg:max-w-6xl">
       <BudgetSummaryCard
         monthLabel={data.monthLabel}
         householdLabel={data.householdLabel}
@@ -25,10 +25,18 @@ export function DashboardView({ data }: { data: DashboardData }) {
 
       <PerforatedDivider />
 
-      <FixedExpenseList items={data.fixedExpenses} />
-      <RecentTransactionList items={data.recentTransactions} />
-      <AssetProgressCard assets={data.assets} />
-      <CategoryBudgetList items={data.categoryBudgets} />
+      {/* 데스크탑(lg+)에서는 한눈에 훑어보는 2단 구성 — 왼쪽은 실제 내역(자주 바뀜),
+          오른쪽은 상태를 확인하는 요약 카드(예산 경고, 자산). 모바일은 그대로 세로 한 줄. */}
+      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-3 lg:items-start lg:gap-8">
+        <div className="flex flex-col gap-6 lg:col-span-2">
+          <RecentTransactionList items={data.recentTransactions} />
+          <FixedExpenseList items={data.fixedExpenses} />
+        </div>
+        <div className="flex flex-col gap-6">
+          <CategoryBudgetList items={data.categoryBudgets} />
+          <AssetProgressCard assets={data.assets} />
+        </div>
+      </div>
 
       <button
         type="button"

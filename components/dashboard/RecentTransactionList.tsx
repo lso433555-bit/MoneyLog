@@ -23,7 +23,7 @@ export function RecentTransactionList({ items }: { items: RecentTransactionItem[
           <p className="text-sm text-gray-400">아직 등록된 지출이 없어요.</p>
         </div>
       ) : (
-        <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
+        <ul className="space-y-2">
           {items.map((item) => (
             <li key={item.id} className="ml-card flex items-center gap-3 p-4">
               <CategoryBadge icon={item.category?.icon ?? ""} color={item.category?.color ?? "gray"} />

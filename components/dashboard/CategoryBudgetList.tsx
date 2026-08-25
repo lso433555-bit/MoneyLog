@@ -18,7 +18,7 @@ export function CategoryBudgetList({ items }: { items: CategoryBudgetItem[] }) {
   return (
     <section>
       <h2 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">카테고리별 예산</h2>
-      <div className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
+      <div className="space-y-2">
         {items.map((item) => {
           const status = getBudgetStatus(item.spent, item.limit);
           const progress = item.limit > 0 ? Math.min(100, Math.round((item.spent / item.limit) * 100)) : 0;

@@ -34,7 +34,7 @@ export function AssetProgressCard({ assets }: { assets: AssetItem[] }) {
           />
         </span>
       </div>
-      <div className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
+      <div className="space-y-2">
         {assets.map((asset) => {
           const progress = computeProgress(asset);
           return (
