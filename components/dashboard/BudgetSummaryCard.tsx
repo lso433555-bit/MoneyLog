@@ -20,7 +20,7 @@ export function BudgetSummaryCard({
   const dailyBudget = remainingBudget > 0 ? Math.floor(remainingBudget / daysRemaining) : null;
 
   return (
-    <section className="ml-card p-6">
+    <section className="ml-card mx-auto w-full max-w-2xl p-6">
       <div className="flex items-baseline justify-between">
         <span className="text-sm font-medium text-gray-600">{monthLabel}</span>
         <span className="text-sm text-gray-400">{householdLabel}</span>

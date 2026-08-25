@@ -60,7 +60,7 @@ export function TransactionsView({
 
       <MonthNav monthLabel={monthLabel} prevHref={prevHref} nextHref={nextHref} isNextDisabled={isNextDisabled} />
 
-      <div className="grid grid-cols-3 gap-2 rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
+      <div className="mx-auto grid w-full max-w-2xl grid-cols-3 gap-2 rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
         {(
           [
             { value: "all", label: "전체" },
@@ -83,7 +83,7 @@ export function TransactionsView({
         ))}
       </div>
 
-      <div className="flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2.5 dark:border-gray-700">
+      <div className="mx-auto flex w-full max-w-2xl items-center gap-2 rounded-xl border border-gray-200 px-3 py-2.5 dark:border-gray-700">
         <Search size={16} className="text-gray-400" />
         <input
           type="text"

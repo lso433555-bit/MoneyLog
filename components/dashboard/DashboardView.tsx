@@ -33,7 +33,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
       <button
         type="button"
         onClick={() => openModal("expense")}
-        className="flex items-center justify-center gap-2 rounded-2xl bg-gray-900 py-4 text-sm font-medium text-white transition-opacity hover:opacity-90 dark:bg-gray-100 dark:text-gray-900"
+        className="mx-auto flex w-full max-w-2xl items-center justify-center gap-2 rounded-2xl bg-gray-900 py-4 text-sm font-medium text-white transition-opacity hover:opacity-90 dark:bg-gray-100 dark:text-gray-900"
       >
         <Plus size={18} />
         지출 추가

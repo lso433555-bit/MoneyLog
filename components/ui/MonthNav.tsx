@@ -10,7 +10,7 @@ interface MonthNavProps {
 
 export function MonthNav({ monthLabel, prevHref, nextHref, isNextDisabled }: MonthNavProps) {
   return (
-    <div className="ml-card flex items-center justify-between p-4">
+    <div className="ml-card mx-auto flex w-full max-w-2xl items-center justify-between p-4">
       <Link href={prevHref} aria-label="이전 달" className="rounded-full p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800">
         <ChevronLeft size={20} />
       </Link>
