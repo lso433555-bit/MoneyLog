@@ -191,7 +191,7 @@ export function TransactionModal({ initialType, editing = null, onClose }: Trans
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             {editing
               ? type === "expense"
                 ? "지출 수정"
@@ -204,21 +204,23 @@ export function TransactionModal({ initialType, editing = null, onClose }: Trans
             type="button"
             onClick={onClose}
             aria-label="닫기"
-            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
           >
             <X size={20} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1">
+          <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
             {(["expense", "income"] as const).map((t) => (
               <button
                 key={t}
                 type="button"
                 onClick={() => setType(t)}
                 className={`rounded-lg py-2 text-sm font-medium transition-colors ${
-                  type === t ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"
+                  type === t
+                    ? "bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-gray-100"
+                    : "text-gray-500"
                 }`}
               >
                 {t === "expense" ? "지출" : "수입"}
@@ -229,7 +231,7 @@ export function TransactionModal({ initialType, editing = null, onClose }: Trans
           <AmountKeypad digits={amountDigits} onDigitsChange={setAmountDigits} />
 
           <div>
-            <p className="mb-1.5 text-sm font-medium text-gray-700">카테고리</p>
+            <p className="mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">카테고리</p>
             {orderedCategories === null ? (
               <p className="py-2 text-sm text-gray-400">불러오는 중...</p>
             ) : (
@@ -255,14 +257,16 @@ export function TransactionModal({ initialType, editing = null, onClose }: Trans
             )}
           </div>
 
-          <div className="flex items-center justify-between rounded-xl border border-gray-200 px-4 py-3">
-            <span className="text-sm font-medium text-gray-700">고정 {type === "expense" ? "지출" : "수입"}</span>
+          <div className="flex items-center justify-between rounded-xl border border-gray-200 px-4 py-3 dark:border-gray-700">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              고정 {type === "expense" ? "지출" : "수입"}
+            </span>
             <button
               type="button"
               role="switch"
               aria-checked={isFixed}
               onClick={() => setIsFixed((v) => !v)}
-              className={`h-6 w-11 shrink-0 rounded-full transition-colors ${isFixed ? "bg-gray-900" : "bg-gray-200"}`}
+              className={`h-6 w-11 shrink-0 rounded-full transition-colors ${isFixed ? "bg-gray-900 dark:bg-gray-500" : "bg-gray-200 dark:bg-gray-700"}`}
             >
               <span
                 className={`block h-5 w-5 translate-x-0.5 rounded-full bg-white transition-transform ${
@@ -274,7 +278,7 @@ export function TransactionModal({ initialType, editing = null, onClose }: Trans
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-gray-700">
+              <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
                 날짜
               </label>
               <input
@@ -282,11 +286,11 @@ export function TransactionModal({ initialType, editing = null, onClose }: Trans
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none"
+                className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
               />
             </div>
             <div>
-              <label htmlFor="payment-method" className="mb-1.5 block text-sm font-medium text-gray-700">
+              <label htmlFor="payment-method" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
                 결제수단 (선택)
               </label>
               <input
@@ -295,13 +299,13 @@ export function TransactionModal({ initialType, editing = null, onClose }: Trans
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
                 placeholder="예: 카드"
-                className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none"
+                className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="memo" className="mb-1.5 block text-sm font-medium text-gray-700">
+            <label htmlFor="memo" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
               메모 (선택)
             </label>
             <input
@@ -310,7 +314,7 @@ export function TransactionModal({ initialType, editing = null, onClose }: Trans
               value={memo}
               onChange={(e) => setMemo(e.target.value)}
               placeholder="예: 이마트 장보기"
-              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none"
+              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
             />
           </div>
 
@@ -319,7 +323,7 @@ export function TransactionModal({ initialType, editing = null, onClose }: Trans
           <button
             type="submit"
             disabled={submitting || deleting}
-            className="rounded-xl bg-gray-900 py-3.5 text-sm font-medium text-white transition-opacity disabled:opacity-50"
+            className="rounded-xl bg-gray-900 py-3.5 text-sm font-medium text-white transition-opacity disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900"
           >
             {submitting ? "저장 중..." : "저장"}
           </button>

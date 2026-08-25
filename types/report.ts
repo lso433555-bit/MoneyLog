@@ -11,3 +11,9 @@ export interface CategoryIncreaseItem {
   category: DashboardCategoryInfo;
   delta: number;
 }
+
+export interface MonthlyTrendPoint {
+  year: number;
+  month: number;
+  total: number;
+}

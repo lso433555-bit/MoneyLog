@@ -3,6 +3,8 @@ import { getCurrentMonthRange } from "@/lib/date";
 import { LoginRequired } from "@/components/ui/LoginRequired";
 import { BudgetSettingsView } from "@/components/settings/BudgetSettingsView";
 import { AssetManager } from "@/components/settings/AssetManager";
+import { InstallAppButton } from "@/components/settings/InstallAppButton";
+import { ExportDataButton } from "@/components/settings/ExportDataButton";
 import { AccountSection } from "@/components/settings/AccountSection";
 import type { CategoryOption } from "@/lib/categories";
 import type { AssetManagementItem } from "@/types/assets";
@@ -55,8 +57,8 @@ export default async function SettingsPage() {
   }));
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-6 md:max-w-3xl">
-      <h1 className="text-lg font-semibold text-gray-900">설정</h1>
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-6 md:max-w-3xl xl:max-w-5xl">
+      <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">설정</h1>
 
       <BudgetSettingsView
         monthLabel={`${year}년 ${month}월`}
@@ -66,6 +68,9 @@ export default async function SettingsPage() {
       />
 
       <AssetManager assets={assets} />
+
+      <InstallAppButton />
+      <ExportDataButton />
 
       <AccountSection userEmail={user.email ?? ""} />
     </div>

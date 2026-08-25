@@ -26,10 +26,10 @@ function AmountField({
   const display = digits ? Number(digits).toLocaleString("ko-KR") : "";
   return (
     <div>
-      <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-gray-700">
+      <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
         {label}
       </label>
-      <div className="flex items-center gap-1 rounded-xl border border-gray-200 px-4 py-3">
+      <div className="flex items-center gap-1 rounded-xl border border-gray-200 px-4 py-3 dark:border-gray-700">
         <span className="text-gray-400">₩</span>
         <input
           id={id}
@@ -38,7 +38,7 @@ function AmountField({
           placeholder="0"
           value={display}
           onChange={onChange}
-          className="w-full bg-transparent font-mono text-sm tabular-nums text-gray-900 outline-none"
+          className="w-full bg-transparent font-mono text-sm tabular-nums text-gray-900 outline-none dark:text-gray-100"
         />
       </div>
     </div>
@@ -135,26 +135,30 @@ export function AssetFormModal({ editing, onClose, onSaved }: AssetFormModalProp
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">{editing ? "자산 수정" : "자산 추가"}</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            {editing ? "자산 수정" : "자산 추가"}
+          </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="닫기"
-            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
           >
             <X size={20} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1">
+          <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
             {(["savings", "loan"] as const).map((t) => (
               <button
                 key={t}
                 type="button"
                 onClick={() => setType(t)}
                 className={`rounded-lg py-2 text-sm font-medium transition-colors ${
-                  type === t ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"
+                  type === t
+                    ? "bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-gray-100"
+                    : "text-gray-500"
                 }`}
               >
                 {t === "savings" ? "적금" : "대출"}
@@ -163,7 +167,7 @@ export function AssetFormModal({ editing, onClose, onSaved }: AssetFormModalProp
           </div>
 
           <div>
-            <label htmlFor="asset-name" className="mb-1.5 block text-sm font-medium text-gray-700">
+            <label htmlFor="asset-name" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
               이름
             </label>
             <input
@@ -172,7 +176,7 @@ export function AssetFormModal({ editing, onClose, onSaved }: AssetFormModalProp
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={type === "loan" ? "예: 전세자금대출" : "예: 청약저축"}
-              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none"
+              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
             />
           </div>
 
@@ -195,7 +199,7 @@ export function AssetFormModal({ editing, onClose, onSaved }: AssetFormModalProp
           <button
             type="submit"
             disabled={submitting || deleting}
-            className="rounded-xl bg-gray-900 py-3.5 text-sm font-medium text-white transition-opacity disabled:opacity-50"
+            className="rounded-xl bg-gray-900 py-3.5 text-sm font-medium text-white transition-opacity disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900"
           >
             {submitting ? "저장 중..." : "저장"}
           </button>

@@ -82,3 +82,10 @@ export function parseMonthParam(m: string | string[] | undefined): { year: numbe
 export function formatMonthParam(year: number, month: number): string {
   return `${year}-${String(month).padStart(2, "0")}`;
 }
+
+// "오늘 하루 쓸 수 있는 돈" 계산용 — 이번 달 마지막 날 기준으로 오늘을 포함한 남은 일수.
+export function getDaysRemainingInMonth(): number {
+  const [year, month, day] = getKstTodayDateString().split("-").map(Number);
+  const lastDay = new Date(year, month, 0).getDate();
+  return lastDay - day + 1;
+}

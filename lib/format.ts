@@ -21,3 +21,9 @@ export function formatShortDateKo(isoDate: string): string {
   const [, month, day] = isoDate.split("-");
   return `${Number(month)}월 ${Number(day)}일`;
 }
+
+// 월별 추이 그래프처럼 좁은 공간에 금액을 표시할 때 쓰는 "만 원" 단위 축약 표기.
+export function formatCompactKRWManwon(amount: number): string {
+  const man = Math.round(amount / 10000);
+  return `${man.toLocaleString("ko-KR")}만`;
+}

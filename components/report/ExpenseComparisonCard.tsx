@@ -27,7 +27,7 @@ export function ExpenseComparisonCard({
     <section className="ml-card p-6">
       <p className="text-sm text-gray-500">이번 달 총지출</p>
       <p className="mt-1">
-        <MoneyAmount value={totalThisMonth} className="text-3xl font-semibold text-gray-900" />
+        <MoneyAmount value={totalThisMonth} className="text-3xl font-semibold text-gray-900 dark:text-gray-100" />
       </p>
       <div className={`mt-2 flex flex-wrap items-center gap-1.5 text-sm font-medium ${color}`}>
         <Icon size={16} />

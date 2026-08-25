@@ -14,7 +14,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
   const { openModal } = useTransactionModal();
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-6 md:max-w-3xl">
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-6 md:max-w-3xl xl:max-w-5xl">
       <BudgetSummaryCard
         monthLabel={data.monthLabel}
         householdLabel={data.householdLabel}
@@ -33,7 +33,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
       <button
         type="button"
         onClick={() => openModal("expense")}
-        className="flex items-center justify-center gap-2 rounded-2xl bg-gray-900 py-4 text-sm font-medium text-white transition-opacity hover:opacity-90"
+        className="flex items-center justify-center gap-2 rounded-2xl bg-gray-900 py-4 text-sm font-medium text-white transition-opacity hover:opacity-90 dark:bg-gray-100 dark:text-gray-900"
       >
         <Plus size={18} />
         지출 추가

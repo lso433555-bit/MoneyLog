@@ -15,22 +15,40 @@ function computeProgress(asset: AssetItem): number {
 export function AssetProgressCard({ assets }: { assets: AssetItem[] }) {
   if (assets.length === 0) return null;
 
+  // 순자산 = 적금 잔액 합 - 대출 잔액 합 (대출 currentAmount는 "남은 잔액"이라 그대로 부채로 뺀다).
+  const netWorth = assets.reduce(
+    (sum, a) => sum + (a.type === "savings" ? a.currentAmount : -a.currentAmount),
+    0
+  );
+
   return (
     <section>
-      <h2 className="mb-3 text-sm font-semibold text-gray-700">자산 현황</h2>
-      <div className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0">
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300">자산 현황</h2>
+        <span className="text-xs text-gray-400">
+          순자산{" "}
+          <MoneyAmount
+            value={netWorth}
+            warnOnNegative
+            className="text-xs font-medium text-gray-600 dark:text-gray-400"
+          />
+        </span>
+      </div>
+      <div className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
         {assets.map((asset) => {
           const progress = computeProgress(asset);
           return (
             <div key={asset.id} className="ml-card p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{asset.name}</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{asset.name}</p>
                   <p className="text-xs text-gray-500">{asset.type === "loan" ? "대출" : "적금"}</p>
                 </div>
-                <p className="font-mono text-sm font-medium tabular-nums text-gray-700">{progress}%</p>
+                <p className="font-mono text-sm font-medium tabular-nums text-gray-700 dark:text-gray-300">
+                  {progress}%
+                </p>
               </div>
-              <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-gray-100">
+              <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
                 <div
                   className={`h-full rounded-full transition-[width] duration-300 ${
                     asset.type === "loan" ? "bg-coral-500" : "bg-teal-500"

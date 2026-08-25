@@ -55,12 +55,12 @@ export function TransactionsView({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-6 md:max-w-3xl">
-      <h1 className="text-lg font-semibold text-gray-900">전체 내역</h1>
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-6 md:max-w-3xl xl:max-w-5xl">
+      <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">전체 내역</h1>
 
       <MonthNav monthLabel={monthLabel} prevHref={prevHref} nextHref={nextHref} isNextDisabled={isNextDisabled} />
 
-      <div className="grid grid-cols-3 gap-2 rounded-xl bg-gray-100 p-1">
+      <div className="grid grid-cols-3 gap-2 rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
         {(
           [
             { value: "all", label: "전체" },
@@ -73,7 +73,9 @@ export function TransactionsView({
             type="button"
             onClick={() => setTypeFilter(t.value)}
             className={`rounded-lg py-2 text-sm font-medium transition-colors ${
-              typeFilter === t.value ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"
+              typeFilter === t.value
+                ? "bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-gray-100"
+                : "text-gray-500"
             }`}
           >
             {t.label}
@@ -81,26 +83,26 @@ export function TransactionsView({
         ))}
       </div>
 
-      <div className="flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2.5">
+      <div className="flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2.5 dark:border-gray-700">
         <Search size={16} className="text-gray-400" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="메모, 카테고리로 검색"
-          className="w-full bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400"
+          className="w-full bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400 dark:text-gray-100"
         />
       </div>
 
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 py-12 text-center">
+        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 py-12 text-center dark:border-gray-700">
           <Inbox size={20} className="text-gray-300" />
           <p className="text-sm text-gray-400">
             {transactions.length === 0 ? "이번 달 내역이 없어요." : "검색 결과가 없어요."}
           </p>
         </div>
       ) : (
-        <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0">
+        <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
           {filtered.map((t) => (
             <li key={t.id}>
               <button
@@ -110,7 +112,7 @@ export function TransactionsView({
               >
                 <CategoryBadge icon={t.category?.icon ?? ""} color={t.category?.color ?? "gray"} />
                 <div className="min-w-0 flex-1">
-                  <p className="flex items-center gap-1.5 truncate text-sm font-medium text-gray-900">
+                  <p className="flex items-center gap-1.5 truncate text-sm font-medium text-gray-900 dark:text-gray-100">
                     {t.memo || t.category?.name || (t.type === "income" ? "수입" : "지출")}
                     {t.isFixed && <Repeat size={12} className="shrink-0 text-gray-400" aria-label="고정" />}
                   </p>
@@ -125,7 +127,7 @@ export function TransactionsView({
                     value={t.amount}
                     forceNegative={t.type === "expense"}
                     showPlusSign={t.type === "income"}
-                    className="text-sm font-medium text-gray-900"
+                    className="text-sm font-medium text-gray-900 dark:text-gray-100"
                   />
                 </div>
               </button>

@@ -4,7 +4,7 @@ import { formatMonthLabel } from "@/lib/format";
 import { ensureRecurringForViewedMonth } from "@/lib/recurring";
 import { LoginRequired } from "@/components/ui/LoginRequired";
 import { ReportView } from "@/components/report/ReportView";
-import type { CategoryExpenseItem, CategoryIncreaseItem } from "@/types/report";
+import type { CategoryExpenseItem, CategoryIncreaseItem, MonthlyTrendPoint } from "@/types/report";
 import type { DashboardCategoryInfo } from "@/types/dashboard";
 
 interface ThisMonthRow {
@@ -17,6 +17,11 @@ interface ThisMonthRow {
 interface LastMonthRow {
   amount: number;
   category_id: string | null;
+}
+
+interface TrendRow {
+  amount: number;
+  date: string;
 }
 
 export default async function ReportPage({
@@ -45,7 +50,10 @@ export default async function ReportPage({
   // 실제 이번 달을 보고 있을 때만 내부적으로 자동생성 수행 (지난 달 조회 시엔 건드리지 않음).
   await ensureRecurringForViewedMonth(supabase, { userId: user.id, year, month, monthStart: start, monthEnd: end });
 
-  const [thisMonthRes, lastMonthRes] = await Promise.all([
+  const trendStartMonth = shiftMonth(year, month, -5);
+  const { start: trendStart } = getMonthRange(trendStartMonth.year, trendStartMonth.month);
+
+  const [thisMonthRes, lastMonthRes, trendRes] = await Promise.all([
     supabase
       .from("transactions")
       .select("amount, category_id, is_fixed, category:categories(name, icon, color)")
@@ -60,6 +68,14 @@ export default async function ReportPage({
       .gte("date", prevStart)
       .lt("date", prevEnd)
       .returns<LastMonthRow[]>(),
+    // 이번 달 이전 5개월치 — 이번 달 합계(totalThisMonth)와 합쳐 6개월 추이를 만든다.
+    supabase
+      .from("transactions")
+      .select("amount, date")
+      .eq("type", "expense")
+      .gte("date", trendStart)
+      .lt("date", start)
+      .returns<TrendRow[]>(),
   ]);
 
   const thisMonth = thisMonthRes.data ?? [];
@@ -86,6 +102,20 @@ export default async function ReportPage({
     lastMonthByCategory.set(t.category_id, (lastMonthByCategory.get(t.category_id) ?? 0) + t.amount);
   }
 
+  const trendByKey = new Map<string, number>();
+  for (const t of trendRes.data ?? []) {
+    const key = t.date.slice(0, 7); // "YYYY-MM"
+    trendByKey.set(key, (trendByKey.get(key) ?? 0) + t.amount);
+  }
+  const monthlyTrend: MonthlyTrendPoint[] = [
+    ...Array.from({ length: 5 }, (_, i) => shiftMonth(year, month, -5 + i)).map(({ year: y, month: m }) => ({
+      year: y,
+      month: m,
+      total: trendByKey.get(`${y}-${String(m).padStart(2, "0")}`) ?? 0,
+    })),
+    { year, month, total: totalThisMonth },
+  ];
+
   const increases: CategoryIncreaseItem[] = categoryBreakdown
     .map(({ categoryId, category, amount }) => ({
       categoryId,
@@ -108,6 +138,7 @@ export default async function ReportPage({
       variableTotal={variableTotal}
       categoryBreakdown={categoryBreakdown}
       increases={increases}
+      monthlyTrend={monthlyTrend}
     />
   );
 }

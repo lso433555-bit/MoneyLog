@@ -34,6 +34,6 @@ body {
   /* 대시보드 전반에서 쓰는 "통장 카드" 표면 스타일. 배경(#f7f6f4)과의 대비를 위해
      옅은 헤어라인 보더를 얹어 그림자만으로는 부족한 경계 정의를 보완한다. */
   .ml-card {
-    @apply rounded-2xl border border-black/[0.04] bg-white shadow-sm;
+    @apply rounded-2xl border border-black/[0.04] bg-white shadow-sm dark:border-white/[0.06] dark:bg-gray-900;
   }
 }

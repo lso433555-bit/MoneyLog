@@ -40,7 +40,9 @@ export function AmountKeypad({ digits, onDigitsChange }: AmountKeypadProps) {
         className="flex cursor-text items-baseline justify-center gap-1 rounded-xl py-4 outline-none focus:ring-2 focus:ring-coral-500"
       >
         <span className="text-xl font-normal text-gray-400">₩</span>
-        <span className="font-mono text-4xl font-semibold tabular-nums text-gray-900">{display}</span>
+        <span className="font-mono text-4xl font-semibold tabular-nums text-gray-900 dark:text-gray-100">
+          {display}
+        </span>
       </div>
       <div className="grid grid-cols-3 gap-2">
         {KEYS.map((key) => (
@@ -49,7 +51,7 @@ export function AmountKeypad({ digits, onDigitsChange }: AmountKeypadProps) {
             type="button"
             onClick={() => press(key)}
             aria-label={key === "back" ? "지우기" : key}
-            className="flex h-12 items-center justify-center rounded-xl bg-gray-50 text-lg font-medium text-gray-800 transition-colors hover:bg-gray-100"
+            className="flex h-12 items-center justify-center rounded-xl bg-gray-50 text-lg font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
           >
             {key === "back" ? <Delete size={18} /> : key}
           </button>

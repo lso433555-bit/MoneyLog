@@ -110,28 +110,30 @@ export function RecurringFormModal({ categories, editing, defaultType, onClose, 
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             {editing ? "고정 항목 수정" : "고정 항목 추가"}
           </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="닫기"
-            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
           >
             <X size={20} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1">
+          <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
             {(["expense", "income"] as const).map((t) => (
               <button
                 key={t}
                 type="button"
                 onClick={() => setType(t)}
                 className={`rounded-lg py-2 text-sm font-medium transition-colors ${
-                  type === t ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"
+                  type === t
+                    ? "bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-gray-100"
+                    : "text-gray-500"
                 }`}
               >
                 {t === "expense" ? "고정 지출" : "고정 수입"}
@@ -140,7 +142,7 @@ export function RecurringFormModal({ categories, editing, defaultType, onClose, 
           </div>
 
           <div>
-            <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-gray-700">
+            <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
               이름
             </label>
             <input
@@ -149,15 +151,15 @@ export function RecurringFormModal({ categories, editing, defaultType, onClose, 
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="예: 월세"
-              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none"
+              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
             />
           </div>
 
           <div>
-            <label htmlFor="recurring-amount" className="mb-1.5 block text-sm font-medium text-gray-700">
+            <label htmlFor="recurring-amount" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
               금액
             </label>
-            <div className="flex items-center gap-1 rounded-xl border border-gray-200 px-4 py-3">
+            <div className="flex items-center gap-1 rounded-xl border border-gray-200 px-4 py-3 dark:border-gray-700">
               <span className="text-gray-400">₩</span>
               <input
                 id="recurring-amount"
@@ -166,7 +168,7 @@ export function RecurringFormModal({ categories, editing, defaultType, onClose, 
                 placeholder="0"
                 value={amountDisplay}
                 onChange={handleAmountChange}
-                className="w-full bg-transparent font-mono text-lg tabular-nums text-gray-900 outline-none"
+                className="w-full bg-transparent font-mono text-lg tabular-nums text-gray-900 outline-none dark:text-gray-100"
               />
             </div>
           </div>
@@ -195,7 +197,7 @@ export function RecurringFormModal({ categories, editing, defaultType, onClose, 
           </div>
 
           <div>
-            <label htmlFor="day" className="mb-1.5 block text-sm font-medium text-gray-700">
+            <label htmlFor="day" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
               매월 며칠
             </label>
             <div className="flex items-center gap-2">
@@ -205,7 +207,7 @@ export function RecurringFormModal({ categories, editing, defaultType, onClose, 
                 inputMode="numeric"
                 value={dayOfMonth}
                 onChange={handleDayChange}
-                className="w-20 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none"
+                className="w-20 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-900 outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
               />
               <span className="text-sm text-gray-500">일 (31일보다 짧은 달은 말일로 자동 조정돼요)</span>
             </div>
@@ -216,7 +218,7 @@ export function RecurringFormModal({ categories, editing, defaultType, onClose, 
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-xl bg-gray-900 py-3.5 text-sm font-medium text-white transition-opacity disabled:opacity-50"
+            className="rounded-xl bg-gray-900 py-3.5 text-sm font-medium text-white transition-opacity disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900"
           >
             {submitting ? "저장 중..." : "저장"}
           </button>
