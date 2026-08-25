@@ -26,7 +26,9 @@ export function MoneyAmount({
 }: MoneyAmountProps) {
   const isNegative = forceNegative || value < 0;
   const sign = isNegative ? "-" : showPlusSign ? "+" : "";
-  const colorClass = warnOnNegative && isNegative ? "text-red-600" : "";
+  // className에 색상 유틸(text-gray-900 등)이 같이 들어오면 Tailwind가 생성한 스타일시트
+  // 순서에 따라 어느 쪽이 이길지 예측 불가능해진다 — !important로 항상 이 경고색이 이기게 한다.
+  const colorClass = warnOnNegative && isNegative ? "!text-red-600" : "";
   const rootClassName = ["font-mono", "tabular-nums", colorClass, className].filter(Boolean).join(" ");
 
   return (

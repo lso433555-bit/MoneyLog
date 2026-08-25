@@ -13,7 +13,7 @@ export function FixedExpenseList({ items }: { items: FixedExpenseItem[] }) {
           <p className="text-sm text-gray-400">등록된 고정지출이 없어요.</p>
         </div>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-2 lg:grid lg:grid-cols-2 lg:gap-2 lg:space-y-0">
           {items.map((item) => (
             <li key={item.id} className="ml-card flex items-center gap-3 p-4">
               <CategoryBadge icon={item.category?.icon ?? ""} color={item.category?.color ?? "gray"} />

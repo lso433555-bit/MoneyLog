@@ -37,16 +37,19 @@ export function CategoryBudgetList({ items }: { items: CategoryBudgetItem[] }) {
                 <CategoryBadge icon={item.category.icon} color={item.category.color} size="sm" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">{item.category.name}</p>
-                  {status === "over" && <p className="text-xs font-medium text-red-600">예산 초과</p>}
+                  {status === "over" && <p className="truncate text-xs font-medium text-red-600">예산 초과</p>}
                 </div>
-                <p aria-live={status === "over" ? "polite" : undefined} className={`text-sm font-medium ${amountColor}`}>
-                  <MoneyAmount value={item.spent} />
-                  <span className="text-gray-400"> / </span>
-                  <MoneyAmount value={item.limit} className="text-gray-500" />
-                  {status === "over" && <span className="sr-only"> 예산을 초과했습니다</span>}
-                </p>
               </div>
-              <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+              <p
+                aria-live={status === "over" ? "polite" : undefined}
+                className={`mt-2 whitespace-nowrap text-sm font-medium ${amountColor}`}
+              >
+                <MoneyAmount value={item.spent} />
+                <span className="text-gray-400"> / </span>
+                <MoneyAmount value={item.limit} className="text-gray-500" />
+                {status === "over" && <span className="sr-only"> 예산을 초과했습니다</span>}
+              </p>
+              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
                 <div className={`h-full rounded-full transition-[width] duration-300 ${barColor}`} style={{ width: `${progress}%` }} />
               </div>
             </div>
