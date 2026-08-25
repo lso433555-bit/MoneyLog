@@ -62,7 +62,7 @@ export function RecurringView({ initialTemplates, categories }: RecurringViewPro
     <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-6 md:max-w-3xl xl:max-w-5xl">
       <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">고정지출</h1>
 
-      <div className="mx-auto grid w-full max-w-2xl grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
+      <div className="grid w-full grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
         {(["expense", "income"] as const).map((t) => (
           <button
             key={t}
@@ -140,7 +140,7 @@ export function RecurringView({ initialTemplates, categories }: RecurringViewPro
       <button
         type="button"
         onClick={openCreateForm}
-        className="mx-auto flex w-full max-w-2xl items-center justify-center gap-2 rounded-2xl bg-gray-900 py-4 text-sm font-medium text-white transition-opacity hover:opacity-90 dark:bg-gray-100 dark:text-gray-900"
+        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gray-900 py-4 text-sm font-medium text-white transition-opacity hover:opacity-90 dark:bg-gray-100 dark:text-gray-900"
       >
         <Plus size={18} />
         {tab === "expense" ? "고정지출 추가" : "고정수입 추가"}

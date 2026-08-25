@@ -28,7 +28,7 @@ export function ExpenseComparisonCard({
   const color = direction === "up" ? "text-red-600" : direction === "down" ? "text-green-600" : "text-gray-400";
 
   return (
-    <section className="ml-card mx-auto w-full max-w-2xl p-6">
+    <section className="ml-card w-full p-6">
       <p className="text-sm text-gray-500">이번 달 총지출</p>
       <p className="mt-1">
         <MoneyAmount
