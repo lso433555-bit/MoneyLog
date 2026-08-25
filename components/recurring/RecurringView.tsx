@@ -87,46 +87,50 @@ export function RecurringView({ initialTemplates, categories }: RecurringViewPro
       ) : (
         <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
           {items.map((item) => (
-            <li key={item.id} className={`ml-card flex items-center gap-3 p-4 ${!item.isActive ? "opacity-50" : ""}`}>
-              <CategoryBadge icon={item.category?.icon ?? ""} color={item.category?.color ?? "gray"} size="sm" />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">{item.name}</p>
-                <p className="truncate text-xs text-gray-500">
-                  매월 {item.dayOfMonth}일 · {item.category?.name ?? "미분류"}
-                </p>
+            <li key={item.id} className={`ml-card p-4 ${!item.isActive ? "opacity-50" : ""}`}>
+              <div className="flex items-center gap-3">
+                <CategoryBadge icon={item.category?.icon ?? ""} color={item.category?.color ?? "gray"} size="sm" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">{item.name}</p>
+                  <p className="truncate text-xs text-gray-500">
+                    매월 {item.dayOfMonth}일 · {item.category?.name ?? "미분류"}
+                  </p>
+                </div>
               </div>
-              <MoneyAmount value={item.amount} className="text-sm font-medium text-gray-900 dark:text-gray-100" />
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={() => toggleActive(item)}
-                  disabled={pendingId === item.id}
-                  title={item.isActive ? "비활성화" : "활성화"}
-                  className={`h-5 w-9 rounded-full transition-colors ${item.isActive ? "bg-gray-900 dark:bg-gray-500" : "bg-gray-200 dark:bg-gray-700"}`}
-                >
-                  <span
-                    className={`block h-4 w-4 translate-x-0.5 rounded-full bg-white transition-transform ${
-                      item.isActive ? "translate-x-[18px]" : "translate-x-0.5"
-                    }`}
-                  />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => openEditForm(item)}
-                  aria-label="수정"
-                  className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
-                >
-                  <Pencil size={15} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(item)}
-                  disabled={pendingId === item.id}
-                  aria-label="삭제"
-                  className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-red-600 dark:hover:bg-gray-800"
-                >
-                  <Trash2 size={15} />
-                </button>
+              <div className="mt-3 flex items-center justify-between">
+                <MoneyAmount value={item.amount} className="text-sm font-medium text-gray-900 dark:text-gray-100" />
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => toggleActive(item)}
+                    disabled={pendingId === item.id}
+                    title={item.isActive ? "비활성화" : "활성화"}
+                    className={`h-5 w-9 rounded-full transition-colors ${item.isActive ? "bg-gray-900 dark:bg-gray-500" : "bg-gray-200 dark:bg-gray-700"}`}
+                  >
+                    <span
+                      className={`block h-4 w-4 translate-x-0.5 rounded-full bg-white transition-transform ${
+                        item.isActive ? "translate-x-[18px]" : "translate-x-0.5"
+                      }`}
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openEditForm(item)}
+                    aria-label="수정"
+                    className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                  >
+                    <Pencil size={15} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(item)}
+                    disabled={pendingId === item.id}
+                    aria-label="삭제"
+                    className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-red-600 dark:hover:bg-gray-800"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </div>
               </div>
             </li>
           ))}
