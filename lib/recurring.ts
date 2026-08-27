@@ -7,16 +7,15 @@ interface EnsureRecurringParams {
   userId: string;
   year: number;
   month: number;
-  monthStart: string;
-  monthEnd: string;
 }
 
-// 앱 진입(대시보드 로드) 시점에 호출. 활성 고정 템플릿 중 이번 달분 거래가 아직 없는 것만
-// 골라 자동 생성한다. 별도 서버 배치 없이 "로드할 때 없으면 만든다" 방식으로 충분하다는 게
-// PRD의 결정 사항.
+// 앱 진입(대시보드 로드) 시점에 호출. 활성 고정 템플릿 전체에 대해 이번 달분 거래를
+// upsert(ignoreDuplicates)로 생성한다. "조회 후 없으면 insert"가 아니라 DB의
+// unique(recurring_template_id, date) 제약에 기대는 방식이라, 두 기기가 거의 동시에
+// 앱을 열어도(이 앱의 핵심 사용 패턴) 같은 고정지출이 중복 생성되지 않는다.
 export async function ensureRecurringTransactionsForMonth(
   supabase: SupabaseClient<Database>,
-  { householdId, userId, year, month, monthStart, monthEnd }: EnsureRecurringParams
+  { householdId, userId, year, month }: EnsureRecurringParams
 ): Promise<void> {
   const { data: templates } = await supabase
     .from("recurring_templates")
@@ -26,21 +25,9 @@ export async function ensureRecurringTransactionsForMonth(
 
   if (!templates || templates.length === 0) return;
 
-  const { data: existing } = await supabase
-    .from("transactions")
-    .select("recurring_template_id")
-    .eq("household_id", householdId)
-    .gte("date", monthStart)
-    .lt("date", monthEnd)
-    .not("recurring_template_id", "is", null);
-
-  const existingTemplateIds = new Set((existing ?? []).map((row) => row.recurring_template_id));
-  const missingTemplates = templates.filter((t) => !existingTemplateIds.has(t.id));
-  if (missingTemplates.length === 0) return;
-
   const pad = (n: number) => String(n).padStart(2, "0");
 
-  const rows = missingTemplates.map((t) => ({
+  const rows = templates.map((t) => ({
     household_id: householdId,
     user_id: userId,
     type: t.type,
@@ -51,15 +38,19 @@ export async function ensureRecurringTransactionsForMonth(
     recurring_template_id: t.id,
   }));
 
-  await supabase.from("transactions").insert(rows);
+  const { error } = await supabase
+    .from("transactions")
+    .upsert(rows, { onConflict: "recurring_template_id,date", ignoreDuplicates: true });
+
+  if (error) {
+    console.error("고정지출 자동생성 실패:", error.message);
+  }
 }
 
 interface EnsureForViewedMonthParams {
   userId: string;
   year: number;
   month: number;
-  monthStart: string;
-  monthEnd: string;
 }
 
 // 홈/리포트처럼 "특정 연/월"을 보여주는 화면에서 공통으로 쓰는 진입점.
@@ -67,7 +58,7 @@ interface EnsureForViewedMonthParams {
 // 그 시점 기록을 건드리면 안 되기 때문에, 이 판단을 호출부마다 반복하지 않도록 여기서 한 번에 처리한다.
 export async function ensureRecurringForViewedMonth(
   supabase: SupabaseClient<Database>,
-  { userId, year, month, monthStart, monthEnd }: EnsureForViewedMonthParams
+  { userId, year, month }: EnsureForViewedMonthParams
 ): Promise<void> {
   const current = getCurrentMonthRange();
   if (year !== current.year || month !== current.month) return;
@@ -75,5 +66,5 @@ export async function ensureRecurringForViewedMonth(
   const { data: householdId } = await supabase.rpc("get_my_household_id");
   if (!householdId) return;
 
-  await ensureRecurringTransactionsForMonth(supabase, { householdId, userId, year, month, monthStart, monthEnd });
+  await ensureRecurringTransactionsForMonth(supabase, { householdId, userId, year, month });
 }

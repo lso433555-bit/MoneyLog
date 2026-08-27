@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, type ChangeEvent, type FormEvent } from "react";
-import { X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { CategoryBadge } from "@/components/dashboard/CategoryBadge";
+import { Modal } from "@/components/ui/Modal";
 import type { CategoryOption } from "@/lib/categories";
 import type { RecurringTemplateItem } from "@/types/recurring";
 import type { TransactionType } from "@/types/database";
@@ -12,11 +12,19 @@ interface RecurringFormModalProps {
   categories: CategoryOption[];
   editing: RecurringTemplateItem | null;
   defaultType: TransactionType;
+  householdId: string | null;
   onClose: () => void;
   onSaved: () => void;
 }
 
-export function RecurringFormModal({ categories, editing, defaultType, onClose, onSaved }: RecurringFormModalProps) {
+export function RecurringFormModal({
+  categories,
+  editing,
+  defaultType,
+  householdId,
+  onClose,
+  onSaved,
+}: RecurringFormModalProps) {
   const supabase = createClient();
 
   const [type, setType] = useState<TransactionType>(editing?.type ?? defaultType);
@@ -77,7 +85,6 @@ export function RecurringFormModal({ categories, editing, defaultType, onClose, 
         return;
       }
     } else {
-      const { data: householdId } = await supabase.rpc("get_my_household_id");
       if (!householdId) {
         setError("household 정보를 불러오지 못했어요. 새로고침 후 다시 시도해주세요.");
         setSubmitting(false);
@@ -104,26 +111,8 @@ export function RecurringFormModal({ categories, editing, defaultType, onClose, 
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center" onClick={onClose}>
-      <div
-        className="ml-card w-full max-w-md rounded-b-none rounded-t-3xl p-6 sm:rounded-b-3xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            {editing ? "고정 항목 수정" : "고정 항목 추가"}
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="닫기"
-            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <Modal title={editing ? "고정 항목 수정" : "고정 항목 추가"} onClose={onClose}>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
             {(["expense", "income"] as const).map((t) => (
               <button
@@ -222,8 +211,7 @@ export function RecurringFormModal({ categories, editing, defaultType, onClose, 
           >
             {submitting ? "저장 중..." : "저장"}
           </button>
-        </form>
-      </div>
-    </div>
+      </form>
+    </Modal>
   );
 }

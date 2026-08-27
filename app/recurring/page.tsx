@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getMyHouseholdId } from "@/lib/household";
 import { LoginRequired } from "@/components/ui/LoginRequired";
 import { RecurringView } from "@/components/recurring/RecurringView";
 import type { RecurringTemplateItem } from "@/types/recurring";
@@ -24,13 +25,14 @@ export default async function RecurringPage() {
     return <LoginRequired />;
   }
 
-  const [templatesRes, categoriesRes] = await Promise.all([
+  const [templatesRes, categoriesRes, householdId] = await Promise.all([
     supabase
       .from("recurring_templates")
       .select("id, type, name, amount, day_of_month, is_active, category:categories(id, name, icon, color)")
       .order("day_of_month", { ascending: true })
       .returns<TemplateRow[]>(),
     supabase.from("categories").select("id, name, icon, color").order("sort_order").returns<CategoryOption[]>(),
+    getMyHouseholdId(supabase),
   ]);
 
   const templates: RecurringTemplateItem[] = (templatesRes.data ?? []).map((t) => ({
@@ -43,5 +45,5 @@ export default async function RecurringPage() {
     category: t.category,
   }));
 
-  return <RecurringView initialTemplates={templates} categories={categoriesRes.data ?? []} />;
+  return <RecurringView initialTemplates={templates} categories={categoriesRes.data ?? []} householdId={householdId} />;
 }

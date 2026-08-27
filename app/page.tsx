@@ -60,7 +60,7 @@ export default async function HomePage({
 
   const { start, end, year, month } = getCurrentMonthRange();
 
-  await ensureRecurringForViewedMonth(supabase, { userId: user.id, year, month, monthStart: start, monthEnd: end });
+  await ensureRecurringForViewedMonth(supabase, { userId: user.id, year, month });
 
   const [transactionsRes, recurringRes, assetsRes, membersRes, budgetsRes] = await Promise.all([
     supabase

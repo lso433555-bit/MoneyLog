@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMonthRange } from "@/lib/date";
+import { getMyHouseholdId } from "@/lib/household";
 import { LoginRequired } from "@/components/ui/LoginRequired";
 import { BudgetSettingsView } from "@/components/settings/BudgetSettingsView";
 import { AssetManager } from "@/components/settings/AssetManager";
@@ -35,7 +36,7 @@ export default async function SettingsPage() {
 
   const { start, year, month } = getCurrentMonthRange();
 
-  const [categoriesRes, budgetsRes, assetsRes] = await Promise.all([
+  const [categoriesRes, budgetsRes, assetsRes, householdId, memberRes] = await Promise.all([
     supabase.from("categories").select("id, name, icon, color").order("sort_order").returns<CategoryOption[]>(),
     supabase.from("budgets").select("category_id, amount_limit").eq("month", start).returns<BudgetRow[]>(),
     supabase
@@ -43,6 +44,8 @@ export default async function SettingsPage() {
       .select("id, name, type, target_amount, current_amount, monthly_amount")
       .order("created_at")
       .returns<AssetRow[]>(),
+    getMyHouseholdId(supabase),
+    supabase.from("household_members").select("display_name").eq("user_id", user.id).single(),
   ]);
 
   const initialBudgets = Object.fromEntries((budgetsRes.data ?? []).map((b) => [b.category_id, b.amount_limit]));
@@ -65,14 +68,19 @@ export default async function SettingsPage() {
         month={start}
         categories={categoriesRes.data ?? []}
         initialBudgets={initialBudgets}
+        householdId={householdId}
       />
 
-      <AssetManager assets={assets} />
+      <AssetManager assets={assets} householdId={householdId} />
 
       <InstallAppButton />
       <ExportDataButton />
 
-      <AccountSection userEmail={user.email ?? ""} />
+      <AccountSection
+        userEmail={user.email ?? ""}
+        userId={user.id}
+        displayName={memberRes.data?.display_name ?? user.email ?? ""}
+      />
     </div>
   );
 }

@@ -16,6 +16,7 @@ interface TransactionsViewProps {
   nextHref: string;
   isNextDisabled: boolean;
   transactions: TransactionListItem[];
+  householdId: string | null;
 }
 
 type TypeFilter = "all" | TransactionType;
@@ -26,6 +27,7 @@ export function TransactionsView({
   nextHref,
   isNextDisabled,
   transactions,
+  householdId,
 }: TransactionsViewProps) {
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [query, setQuery] = useState("");
@@ -108,24 +110,26 @@ export function TransactionsView({
               <button
                 type="button"
                 onClick={() => setEditing(t)}
-                className="ml-card flex w-full items-center gap-3 p-4 text-left"
+                className="ml-card flex w-full flex-col gap-2 p-4 text-left"
               >
-                <CategoryBadge icon={t.category?.icon ?? ""} color={t.category?.color ?? "gray"} size="sm" />
-                <div className="min-w-0 flex-1">
-                  <p className="flex items-center gap-1.5 truncate text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {t.memo || t.category?.name || (t.type === "income" ? "수입" : "지출")}
-                    {t.isFixed && <Repeat size={12} className="shrink-0 text-gray-400" aria-label="고정" />}
-                  </p>
-                  <p className="truncate text-xs text-gray-500">
-                    {formatShortDateKo(t.date)} · {t.category?.name ?? "미분류"}
-                    {t.paymentMethod && ` · ${t.paymentMethod}`}
-                  </p>
+                <div className="flex items-center gap-3">
+                  <CategoryBadge icon={t.category?.icon ?? ""} color={t.category?.color ?? "gray"} size="sm" />
+                  <div className="min-w-0 flex-1">
+                    <p className="flex items-center gap-1.5 truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {t.memo || t.category?.name || (t.type === "income" ? "수입" : "지출")}
+                      {t.isFixed && <Repeat size={12} className="shrink-0 text-gray-400" aria-label="고정" />}
+                    </p>
+                    <p className="truncate text-xs text-gray-500">
+                      {formatShortDateKo(t.date)} · {t.category?.name ?? "미분류"}
+                      {t.paymentMethod && ` · ${t.paymentMethod}`}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex flex-col items-end gap-0.5">
+                <div className="flex items-center gap-2">
                   {t.enteredBy && <span className="text-[10px] text-gray-400">{t.enteredBy}</span>}
                   <MoneyAmount
                     value={t.amount}
-                    className={`text-sm font-medium ${
+                    className={`ml-auto whitespace-nowrap text-sm font-medium ${
                       t.type === "income"
                         ? "text-green-600 dark:text-green-400"
                         : "text-gray-900 dark:text-gray-100"
@@ -142,6 +146,7 @@ export function TransactionsView({
         <TransactionModal
           initialType={editing.type}
           editing={toEditingTransaction(editing)}
+          householdId={householdId}
           onClose={() => setEditing(null)}
         />
       )}

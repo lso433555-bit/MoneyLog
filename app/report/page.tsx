@@ -48,7 +48,7 @@ export default async function ReportPage({
   const isNextDisabled = year * 12 + month >= current.year * 12 + current.month;
 
   // 실제 이번 달을 보고 있을 때만 내부적으로 자동생성 수행 (지난 달 조회 시엔 건드리지 않음).
-  await ensureRecurringForViewedMonth(supabase, { userId: user.id, year, month, monthStart: start, monthEnd: end });
+  await ensureRecurringForViewedMonth(supabase, { userId: user.id, year, month });
 
   const trendStartMonth = shiftMonth(year, month, -5);
   const { start: trendStart } = getMonthRange(trendStartMonth.year, trendStartMonth.month);

@@ -12,9 +12,16 @@ interface BudgetSettingsViewProps {
   month: string; // YYYY-MM-01, budgets.month과 매칭
   categories: CategoryOption[];
   initialBudgets: Record<string, number>;
+  householdId: string | null;
 }
 
-export function BudgetSettingsView({ monthLabel, month, categories, initialBudgets }: BudgetSettingsViewProps) {
+export function BudgetSettingsView({
+  monthLabel,
+  month,
+  categories,
+  initialBudgets,
+  householdId,
+}: BudgetSettingsViewProps) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -65,7 +72,6 @@ export function BudgetSettingsView({ monthLabel, month, categories, initialBudge
     setError(null);
     setSaved(false);
 
-    const { data: householdId } = await supabase.rpc("get_my_household_id");
     if (!householdId) {
       setError("household 정보를 불러오지 못했어요. 새로고침 후 다시 시도해주세요.");
       setSubmitting(false);
@@ -130,12 +136,14 @@ export function BudgetSettingsView({ monthLabel, month, categories, initialBudge
 
         <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
           {categories.map((cat) => (
-            <li key={cat.id} className="ml-card flex items-center gap-3 p-4">
-              <CategoryBadge icon={cat.icon} color={cat.color} size="sm" />
-              <span className="min-w-0 flex-1 truncate text-sm font-medium text-gray-900 dark:text-gray-100">
-                {cat.name}
-              </span>
-              <div className="flex items-center gap-1 rounded-xl border border-gray-200 px-3 py-2 dark:border-gray-700">
+            <li key={cat.id} className="ml-card flex flex-col gap-2 p-4">
+              <div className="flex items-center gap-3">
+                <CategoryBadge icon={cat.icon} color={cat.color} size="sm" />
+                <span className="min-w-0 flex-1 truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {cat.name}
+                </span>
+              </div>
+              <div className="flex items-center gap-1 self-end rounded-xl border border-gray-200 px-3 py-2 dark:border-gray-700">
                 <span className="text-xs text-gray-400">₩</span>
                 <input
                   type="text"

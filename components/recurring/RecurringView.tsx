@@ -14,9 +14,10 @@ import type { TransactionType } from "@/types/database";
 interface RecurringViewProps {
   initialTemplates: RecurringTemplateItem[];
   categories: CategoryOption[];
+  householdId: string | null;
 }
 
-export function RecurringView({ initialTemplates, categories }: RecurringViewProps) {
+export function RecurringView({ initialTemplates, categories, householdId }: RecurringViewProps) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -24,6 +25,7 @@ export function RecurringView({ initialTemplates, categories }: RecurringViewPro
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<RecurringTemplateItem | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const items = initialTemplates.filter((t) => t.type === tab);
 
@@ -45,22 +47,37 @@ export function RecurringView({ initialTemplates, categories }: RecurringViewPro
 
   async function toggleActive(item: RecurringTemplateItem) {
     setPendingId(item.id);
-    await supabase.from("recurring_templates").update({ is_active: !item.isActive }).eq("id", item.id);
+    setActionError(null);
+    const { error } = await supabase
+      .from("recurring_templates")
+      .update({ is_active: !item.isActive })
+      .eq("id", item.id);
     setPendingId(null);
+    if (error) {
+      setActionError("변경에 실패했어요. 다시 시도해주세요.");
+      return;
+    }
     router.refresh();
   }
 
   async function handleDelete(item: RecurringTemplateItem) {
     if (!window.confirm(`"${item.name}"을(를) 삭제할까요?`)) return;
     setPendingId(item.id);
-    await supabase.from("recurring_templates").delete().eq("id", item.id);
+    setActionError(null);
+    const { error } = await supabase.from("recurring_templates").delete().eq("id", item.id);
     setPendingId(null);
+    if (error) {
+      setActionError("삭제에 실패했어요. 다시 시도해주세요.");
+      return;
+    }
     router.refresh();
   }
 
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-6 md:max-w-3xl xl:max-w-5xl">
       <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">고정지출</h1>
+
+      {actionError && <p className="text-sm text-red-600">{actionError}</p>}
 
       <div className="grid w-full grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
         {(["expense", "income"] as const).map((t) => (
@@ -151,6 +168,7 @@ export function RecurringView({ initialTemplates, categories }: RecurringViewPro
           categories={categories}
           editing={editing}
           defaultType={tab}
+          householdId={householdId}
           onClose={() => {
             setFormOpen(false);
             setEditing(null);

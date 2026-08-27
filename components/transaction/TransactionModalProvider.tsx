@@ -18,7 +18,13 @@ export function useTransactionModal(): TransactionModalContextValue {
   return ctx;
 }
 
-export function TransactionModalProvider({ children }: { children: ReactNode }) {
+export function TransactionModalProvider({
+  children,
+  householdId,
+}: {
+  children: ReactNode;
+  householdId: string | null;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [initialType, setInitialType] = useState<TransactionType>("expense");
 
@@ -32,7 +38,7 @@ export function TransactionModalProvider({ children }: { children: ReactNode }) 
   return (
     <TransactionModalContext.Provider value={{ openModal }}>
       {children}
-      {isOpen && <TransactionModal initialType={initialType} onClose={closeModal} />}
+      {isOpen && <TransactionModal initialType={initialType} householdId={householdId} onClose={closeModal} />}
     </TransactionModalContext.Provider>
   );
 }

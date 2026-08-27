@@ -7,7 +7,13 @@ import { AssetFormModal } from "./AssetFormModal";
 import { MoneyAmount } from "@/components/dashboard/MoneyAmount";
 import type { AssetManagementItem } from "@/types/assets";
 
-export function AssetManager({ assets }: { assets: AssetManagementItem[] }) {
+export function AssetManager({
+  assets,
+  householdId,
+}: {
+  assets: AssetManagementItem[];
+  householdId: string | null;
+}) {
   const router = useRouter();
   const [editing, setEditing] = useState<AssetManagementItem | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -78,6 +84,7 @@ export function AssetManager({ assets }: { assets: AssetManagementItem[] }) {
       {formOpen && (
         <AssetFormModal
           editing={editing}
+          householdId={householdId}
           onClose={() => {
             setFormOpen(false);
             setEditing(null);

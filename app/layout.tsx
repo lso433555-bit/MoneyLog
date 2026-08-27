@@ -6,6 +6,7 @@ import { BottomTabBar } from "@/components/nav/BottomTabBar";
 import { TransactionModalProvider } from "@/components/transaction/TransactionModalProvider";
 import { createClient } from "@/lib/supabase/server";
 import { getRemainingBudgetSummary } from "@/lib/budget-summary";
+import { getMyHouseholdId } from "@/lib/household";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -44,13 +45,14 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
   const remainingBudget = user ? await getRemainingBudgetSummary(supabase) : null;
+  const householdId = user ? await getMyHouseholdId(supabase) : null;
 
   return (
     <html lang="ko">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <TransactionModalProvider>
+        <TransactionModalProvider householdId={householdId}>
           <Sidebar remainingBudget={remainingBudget} />
           <main className="pb-24 md:pb-0 md:pl-56">{children}</main>
           <BottomTabBar />

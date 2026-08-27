@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { getKstTodayDateString } from "@/lib/date";
 import { CategoryBadge } from "@/components/dashboard/CategoryBadge";
 import { AmountKeypad } from "@/components/transaction/AmountKeypad";
+import { Modal } from "@/components/ui/Modal";
 import type { CategoryOption } from "@/lib/categories";
 import type { TransactionType } from "@/types/database";
 
@@ -24,12 +24,13 @@ export interface EditingTransaction {
 interface TransactionModalProps {
   initialType: TransactionType;
   editing?: EditingTransaction | null;
+  householdId?: string | null;
   onClose: () => void;
 }
 
 const RECENT_LOOKBACK = 40;
 
-export function TransactionModal({ initialType, editing = null, onClose }: TransactionModalProps) {
+export function TransactionModal({ initialType, editing = null, householdId = null, onClose }: TransactionModalProps) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -131,7 +132,6 @@ export function TransactionModal({ initialType, editing = null, onClose }: Trans
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      const { data: householdId } = await supabase.rpc("get_my_household_id");
 
       if (!user || !householdId) {
         setError("household 정보를 불러오지 못했어요. 새로고침 후 다시 시도해주세요.");
@@ -181,36 +181,17 @@ export function TransactionModal({ initialType, editing = null, onClose }: Trans
     onClose();
   }
 
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center"
-      onClick={onClose}
-    >
-      <div
-        className="ml-card max-h-[90vh] w-full max-w-md overflow-y-auto rounded-b-none rounded-t-3xl p-6 sm:rounded-b-3xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            {editing
-              ? type === "expense"
-                ? "지출 수정"
-                : "수입 수정"
-              : type === "expense"
-                ? "지출 추가"
-                : "수입 추가"}
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="닫기"
-            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
-          >
-            <X size={20} />
-          </button>
-        </div>
+  const title = editing
+    ? type === "expense"
+      ? "지출 수정"
+      : "수입 수정"
+    : type === "expense"
+      ? "지출 추가"
+      : "수입 추가";
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+  return (
+    <Modal title={title} onClose={onClose}>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
             {(["expense", "income"] as const).map((t) => (
               <button
@@ -338,8 +319,7 @@ export function TransactionModal({ initialType, editing = null, onClose }: Trans
               {deleting ? "삭제 중..." : "이 거래 삭제"}
             </button>
           )}
-        </form>
-      </div>
-    </div>
+      </form>
+    </Modal>
   );
 }
