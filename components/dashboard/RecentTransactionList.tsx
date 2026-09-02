@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Receipt } from "lucide-react";
 import { CategoryBadge } from "./CategoryBadge";
 import { MoneyAmount } from "./MoneyAmount";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { formatShortDateKo } from "@/lib/format";
 import type { RecentTransactionItem } from "@/types/dashboard";
 
@@ -20,10 +21,7 @@ export function RecentTransactionList({ items }: { items: RecentTransactionItem[
         )}
       </div>
       {items.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 py-8 text-center dark:border-gray-700">
-          <Receipt size={20} className="text-gray-300" />
-          <p className="text-sm text-gray-400">아직 등록된 지출이 없어요.</p>
-        </div>
+        <EmptyState icon={Receipt} message="아직 등록된 지출이 없어요." />
       ) : (
         <ul className="space-y-2 lg:grid lg:grid-cols-2 lg:gap-2 lg:space-y-0">
           {items.map((item) => (

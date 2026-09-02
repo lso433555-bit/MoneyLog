@@ -1,6 +1,7 @@
 import { Trophy } from "lucide-react";
 import { CategoryBadge } from "./CategoryBadge";
 import { MoneyAmount } from "./MoneyAmount";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { getCategoryColorClasses } from "@/lib/design/categoryColors";
 import type { TopCategoryItem } from "@/types/dashboard";
 
@@ -11,10 +12,7 @@ export function TopCategoriesList({ items }: { items: TopCategoryItem[] }) {
     <section>
       <h2 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">이번 달 지출 TOP</h2>
       {items.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 py-8 text-center dark:border-gray-700">
-          <Trophy size={20} className="text-gray-300" />
-          <p className="text-sm text-gray-400">아직 이번 달 지출이 없어요.</p>
-        </div>
+        <EmptyState icon={Trophy} message="아직 이번 달 지출이 없어요." />
       ) : (
         <div className="space-y-2">
           {items.map((item, index) => {
@@ -22,7 +20,7 @@ export function TopCategoriesList({ items }: { items: TopCategoryItem[] }) {
             const progress = maxAmount > 0 ? Math.round((item.amount / maxAmount) * 100) : 0;
 
             return (
-              <div key={item.category.name} className="ml-card flex items-center gap-3 p-4">
+              <div key={item.categoryId} className="ml-card flex items-center gap-3 p-4">
                 <span className="w-4 shrink-0 text-center text-xs font-semibold tabular-nums text-gray-400">
                   {index + 1}
                 </span>

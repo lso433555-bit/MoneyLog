@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Search, Inbox, Repeat } from "lucide-react";
 import { MonthNav } from "@/components/ui/MonthNav";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { CategoryBadge } from "@/components/dashboard/CategoryBadge";
 import { MoneyAmount } from "@/components/dashboard/MoneyAmount";
 import { formatShortDateKo } from "@/lib/format";
@@ -97,12 +98,11 @@ export function TransactionsView({
       </div>
 
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 py-12 text-center dark:border-gray-700">
-          <Inbox size={20} className="text-gray-300" />
-          <p className="text-sm text-gray-400">
-            {transactions.length === 0 ? "이번 달 내역이 없어요." : "검색 결과가 없어요."}
-          </p>
-        </div>
+        <EmptyState
+          icon={Inbox}
+          message={transactions.length === 0 ? "이번 달 내역이 없어요." : "검색 결과가 없어요."}
+          size="lg"
+        />
       ) : (
         <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
           {filtered.map((t) => (

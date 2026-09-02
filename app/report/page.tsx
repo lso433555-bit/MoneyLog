@@ -2,9 +2,10 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentMonthRange, getMonthRange, shiftMonth, parseMonthParam, formatMonthParam } from "@/lib/date";
 import { formatMonthLabel } from "@/lib/format";
 import { ensureRecurringForViewedMonth } from "@/lib/recurring";
+import { groupExpensesByCategory, UNCATEGORIZED_CATEGORY_ID } from "@/lib/categoryAggregation";
 import { LoginRequired } from "@/components/ui/LoginRequired";
 import { ReportView } from "@/components/report/ReportView";
-import type { CategoryExpenseItem, CategoryIncreaseItem, MonthlyTrendPoint } from "@/types/report";
+import type { CategoryIncreaseItem, MonthlyTrendPoint } from "@/types/report";
 import type { DashboardCategoryInfo } from "@/types/dashboard";
 
 interface ThisMonthRow {
@@ -88,22 +89,12 @@ export default async function ReportPage({
   const variableTotal = totalThisMonth - fixedTotal;
 
   // 카테고리 없는 거래도 "미분류"로 묶어서 넣는다 — 안 그러면 카테고리별 합계가 총지출과 안 맞음.
-  const UNCATEGORIZED_KEY = "uncategorized";
-  const UNCATEGORIZED_INFO: DashboardCategoryInfo = { name: "미분류", icon: "", color: "gray" };
-
-  const categoryMap = new Map<string, CategoryExpenseItem>();
-  for (const t of thisMonth) {
-    const key = t.category_id ?? UNCATEGORIZED_KEY;
-    const info = t.category_id && t.category ? t.category : UNCATEGORIZED_INFO;
-    const existing = categoryMap.get(key);
-    if (existing) existing.amount += t.amount;
-    else categoryMap.set(key, { categoryId: key, category: info, amount: t.amount });
-  }
-  const categoryBreakdown = Array.from(categoryMap.values()).sort((a, b) => b.amount - a.amount);
+  // 홈 대시보드(지출 TOP)와 동일한 집계 로직 공유(lib/categoryAggregation).
+  const categoryBreakdown = groupExpensesByCategory(thisMonth).sort((a, b) => b.amount - a.amount);
 
   const lastMonthByCategory = new Map<string, number>();
   for (const t of lastMonth) {
-    const key = t.category_id ?? UNCATEGORIZED_KEY;
+    const key = t.category_id ?? UNCATEGORIZED_CATEGORY_ID;
     lastMonthByCategory.set(key, (lastMonthByCategory.get(key) ?? 0) + t.amount);
   }
 

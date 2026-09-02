@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Inbox } from "lucide-react";
 import { CategoryBadge } from "./CategoryBadge";
 import { MoneyAmount } from "./MoneyAmount";
+import { EmptyState } from "@/components/ui/EmptyState";
 import type { FixedExpenseItem } from "@/types/dashboard";
 
 export function FixedExpenseList({ items }: { items: FixedExpenseItem[] }) {
@@ -19,13 +20,7 @@ export function FixedExpenseList({ items }: { items: FixedExpenseItem[] }) {
         )}
       </div>
       {items.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 py-8 text-center dark:border-gray-700">
-          <Inbox size={20} className="text-gray-300" />
-          <p className="text-sm text-gray-400">등록된 고정지출이 없어요.</p>
-          <Link href="/recurring" className="text-xs font-medium text-gray-600 underline underline-offset-2 dark:text-gray-400">
-            + 고정지출 등록하기
-          </Link>
-        </div>
+        <EmptyState icon={Inbox} message="등록된 고정지출이 없어요." linkHref="/recurring" linkLabel="+ 고정지출 등록하기" />
       ) : (
         <ul className="space-y-2 lg:grid lg:grid-cols-2 lg:gap-2 lg:space-y-0">
           {items.map((item) => (

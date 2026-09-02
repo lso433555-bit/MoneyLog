@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus, Landmark } from "lucide-react";
 import { AssetFormModal } from "./AssetFormModal";
 import { MoneyAmount } from "@/components/dashboard/MoneyAmount";
+import { EmptyState } from "@/components/ui/EmptyState";
 import type { AssetManagementItem } from "@/types/assets";
 
 export function AssetManager({
@@ -40,10 +41,7 @@ export function AssetManager({
       <p className="mb-3 text-xs text-gray-400">잔액은 자동으로 갱신되지 않아요. 바뀔 때마다 직접 수정해주세요.</p>
 
       {assets.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 py-8 text-center dark:border-gray-700">
-          <Landmark size={20} className="text-gray-300" />
-          <p className="text-sm text-gray-400">등록된 자산이 없어요.</p>
-        </div>
+        <EmptyState icon={Landmark} message="등록된 자산이 없어요." />
       ) : (
         <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
           {assets.map((asset) => (

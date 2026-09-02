@@ -1,3 +1,5 @@
+import type { CategoryAmountItem } from "@/types/category";
+
 export interface DashboardCategoryInfo {
   name: string;
   icon: string;
@@ -28,10 +30,7 @@ export interface AssetItem {
   currentAmount: number;
 }
 
-export interface TopCategoryItem {
-  category: DashboardCategoryInfo;
-  amount: number;
-}
+export type TopCategoryItem = CategoryAmountItem;
 
 export interface DashboardData {
   monthLabel: string;

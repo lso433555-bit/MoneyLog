@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { CategoryBadge } from "@/components/dashboard/CategoryBadge";
 import { MoneyAmount } from "@/components/dashboard/MoneyAmount";
 import { RecurringFormModal } from "./RecurringFormModal";
+import { EmptyState } from "@/components/ui/EmptyState";
 import type { CategoryOption } from "@/lib/categories";
 import type { RecurringTemplateItem } from "@/types/recurring";
 import type { TransactionType } from "@/types/database";
@@ -97,10 +98,7 @@ export function RecurringView({ initialTemplates, categories, householdId }: Rec
       </div>
 
       {items.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 py-12 text-center dark:border-gray-700">
-          <Inbox size={20} className="text-gray-300" />
-          <p className="text-sm text-gray-400">등록된 {tab === "expense" ? "고정지출" : "고정수입"}이 없어요.</p>
-        </div>
+        <EmptyState icon={Inbox} message={`등록된 ${tab === "expense" ? "고정지출" : "고정수입"}이 없어요.`} size="lg" />
       ) : (
         <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
           {items.map((item) => (

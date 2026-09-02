@@ -1,5 +1,6 @@
 import { CategoryBadge } from "@/components/dashboard/CategoryBadge";
 import { MoneyAmount } from "@/components/dashboard/MoneyAmount";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { getCategoryColorClasses } from "@/lib/design/categoryColors";
 import type { CategoryExpenseItem } from "@/types/report";
 
@@ -8,9 +9,7 @@ export function CategoryExpenseBars({ items }: { items: CategoryExpenseItem[] })
     return (
       <section>
         <h2 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">카테고리별 지출</h2>
-        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 py-8 text-center dark:border-gray-700">
-          <p className="text-sm text-gray-400">이번 달 지출 내역이 없어요.</p>
-        </div>
+        <EmptyState message="이번 달 지출 내역이 없어요." />
       </section>
     );
   }

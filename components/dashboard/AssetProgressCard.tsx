@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { Landmark, PiggyBank, Wallet } from "lucide-react";
 import { MoneyAmount } from "./MoneyAmount";
+import { EmptyState } from "@/components/ui/EmptyState";
 import type { AssetItem } from "@/types/dashboard";
 
 // current_amount의 의미가 자산 종류마다 다름: 대출=남은 잔액, 적금=현재 적립액.
@@ -37,53 +37,44 @@ export function AssetProgressCard({ assets }: { assets: AssetItem[] }) {
         )}
       </div>
       {assets.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 py-8 text-center dark:border-gray-700">
-          <Wallet size={20} className="text-gray-300" />
-          <p className="text-sm text-gray-400">등록된 자산이 없어요.</p>
-          <Link href="/settings" className="text-xs font-medium text-gray-600 underline underline-offset-2 dark:text-gray-400">
-            + 자산 등록하기
-          </Link>
-        </div>
+        <EmptyState icon={Wallet} message="등록된 자산이 없어요." linkHref="/settings" linkLabel="+ 자산 등록하기" />
       ) : (
-      <div className="space-y-2">
-        {assets.map((asset) => {
-          const progress = computeProgress(asset);
-          const Icon = asset.type === "loan" ? Landmark : PiggyBank;
-          const badgeClass =
-            asset.type === "loan"
-              ? "bg-coral-100 text-coral-600"
-              : "bg-teal-100 text-teal-600";
+        <div className="space-y-2">
+          {assets.map((asset) => {
+            const progress = computeProgress(asset);
+            const Icon = asset.type === "loan" ? Landmark : PiggyBank;
+            const badgeClass = asset.type === "loan" ? "bg-coral-100 text-coral-600" : "bg-teal-100 text-teal-600";
 
-          return (
-            <div key={asset.id} className="ml-card p-4">
-              <div className="flex items-center gap-3">
-                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${badgeClass}`}>
-                  <Icon size={16} strokeWidth={2} />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">{asset.name}</p>
-                  <p className="text-xs text-gray-500">{asset.type === "loan" ? "대출" : "적금"}</p>
+            return (
+              <div key={asset.id} className="ml-card p-4">
+                <div className="flex items-center gap-3">
+                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${badgeClass}`}>
+                    <Icon size={16} strokeWidth={2} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">{asset.name}</p>
+                    <p className="text-xs text-gray-500">{asset.type === "loan" ? "대출" : "적금"}</p>
+                  </div>
+                  <p className="font-mono text-sm font-medium tabular-nums text-gray-700 dark:text-gray-300">
+                    {progress}%
+                  </p>
                 </div>
-                <p className="font-mono text-sm font-medium tabular-nums text-gray-700 dark:text-gray-300">
-                  {progress}%
-                </p>
+                <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+                  <div
+                    className={`h-full rounded-full transition-[width] duration-300 ${
+                      asset.type === "loan" ? "bg-coral-500" : "bg-teal-500"
+                    }`}
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+                <div className="mt-2 flex justify-between">
+                  <MoneyAmount value={asset.currentAmount} className="text-xs text-gray-500" />
+                  <MoneyAmount value={asset.targetAmount} className="text-xs text-gray-500" />
+                </div>
               </div>
-              <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
-                <div
-                  className={`h-full rounded-full transition-[width] duration-300 ${
-                    asset.type === "loan" ? "bg-coral-500" : "bg-teal-500"
-                  }`}
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-              <div className="mt-2 flex justify-between">
-                <MoneyAmount value={asset.currentAmount} className="text-xs text-gray-500" />
-                <MoneyAmount value={asset.targetAmount} className="text-xs text-gray-500" />
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
       )}
     </section>
   );

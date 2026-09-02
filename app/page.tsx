@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMonthRange } from "@/lib/date";
 import { ensureRecurringForViewedMonth } from "@/lib/recurring";
+import { groupExpensesByCategory } from "@/lib/categoryAggregation";
 import { DashboardView } from "@/components/dashboard/DashboardView";
 import { LoginRequired } from "@/components/ui/LoginRequired";
 import type { DashboardData } from "@/types/dashboard";
@@ -93,18 +94,8 @@ export default async function HomePage({
   const showEnteredBy = memberNameById.size > 1;
 
   // 카테고리별 예산(수동 한도 설정) 대신 "이번 달 어디에 많이 썼는지"를 바로 보여주는 랭킹 —
-  // 설정 없이도 즉시 유용해서 카테고리별 예산 기능을 대체하기로 함.
-  const categorySpend = new Map<string, { category: CategoryRef; amount: number }>();
-  for (const t of transactions) {
-    if (t.type !== "expense" || !t.category_id || !t.category) continue;
-    const existing = categorySpend.get(t.category_id);
-    if (existing) {
-      existing.amount += t.amount;
-    } else {
-      categorySpend.set(t.category_id, { category: t.category, amount: t.amount });
-    }
-  }
-  const topCategories = Array.from(categorySpend.values())
+  // 설정 없이도 즉시 유용해서 카테고리별 예산 기능을 대체하기로 함. 미분류 처리는 /report와 공유(lib/categoryAggregation).
+  const topCategories = groupExpensesByCategory(transactions.filter((t) => t.type === "expense"))
     .sort((a, b) => b.amount - a.amount)
     .slice(0, 4);
 

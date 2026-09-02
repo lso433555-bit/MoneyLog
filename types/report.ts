@@ -1,10 +1,7 @@
 import type { DashboardCategoryInfo } from "@/types/dashboard";
+import type { CategoryAmountItem } from "@/types/category";
 
-export interface CategoryExpenseItem {
-  categoryId: string;
-  category: DashboardCategoryInfo;
-  amount: number;
-}
+export type CategoryExpenseItem = CategoryAmountItem;
 
 export interface CategoryIncreaseItem {
   categoryId: string;
