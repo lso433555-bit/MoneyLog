@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentMonthRange } from "@/lib/date";
 import { ensureRecurringForViewedMonth } from "@/lib/recurring";
 import { groupExpensesByCategory } from "@/lib/categoryAggregation";
+import { logQueryErrors } from "@/lib/supabase/logQueryErrors";
 import { DashboardView } from "@/components/dashboard/DashboardView";
 import { LoginRequired } from "@/components/ui/LoginRequired";
 import type { DashboardData } from "@/types/dashboard";
@@ -78,6 +79,13 @@ export default async function HomePage({
       .returns<AssetRow[]>(),
     supabase.from("household_members").select("user_id, display_name"),
   ]);
+
+  logQueryErrors("HomePage", {
+    transactions: transactionsRes,
+    recurring: recurringRes,
+    assets: assetsRes,
+    members: membersRes,
+  });
 
   const transactions = transactionsRes.data ?? [];
   const income = transactions.filter((t) => t.type === "income").reduce((sum, t) => sum + t.amount, 0);

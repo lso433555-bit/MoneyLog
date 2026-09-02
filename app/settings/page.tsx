@@ -5,6 +5,7 @@ import { AssetManager } from "@/components/settings/AssetManager";
 import { InstallAppButton } from "@/components/settings/InstallAppButton";
 import { ExportDataButton } from "@/components/settings/ExportDataButton";
 import { AccountSection } from "@/components/settings/AccountSection";
+import { logQueryErrors } from "@/lib/supabase/logQueryErrors";
 import type { AssetManagementItem } from "@/types/assets";
 
 interface AssetRow {
@@ -35,6 +36,8 @@ export default async function SettingsPage() {
     getMyHouseholdId(supabase),
     supabase.from("household_members").select("display_name").eq("user_id", user.id).single(),
   ]);
+
+  logQueryErrors("SettingsPage", { assets: assetsRes, member: memberRes });
 
   const assets: AssetManagementItem[] = (assetsRes.data ?? []).map((a) => ({
     id: a.id,

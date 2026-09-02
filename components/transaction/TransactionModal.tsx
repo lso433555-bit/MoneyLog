@@ -44,6 +44,7 @@ export function TransactionModal({ initialType, editing = null, householdId = nu
   const [deleting, setDeleting] = useState(false);
 
   const [categories, setCategories] = useState<CategoryOption[] | null>(null);
+  const [categoriesError, setCategoriesError] = useState(false);
   // 타입(수입/지출)별로 최근 사용한 카테고리 id를 최신순으로 저장 — 카테고리 그리드 상단 노출용.
   const [recentCategoryIds, setRecentCategoryIds] = useState<Record<TransactionType, string[]>>({
     expense: [],
@@ -59,8 +60,14 @@ export function TransactionModal({ initialType, editing = null, householdId = nu
       .from("categories")
       .select("id, name, icon, color")
       .order("sort_order")
-      .then(({ data }) => {
-        if (!cancelled) setCategories(data ?? []);
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) {
+          console.error("카테고리 조회 실패:", error.message);
+          setCategoriesError(true);
+          return;
+        }
+        setCategories(data ?? []);
       });
 
     supabase
@@ -214,7 +221,11 @@ export function TransactionModal({ initialType, editing = null, householdId = nu
           <div>
             <p className="mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">카테고리</p>
             {orderedCategories === null ? (
-              <p className="py-2 text-sm text-gray-400">불러오는 중...</p>
+              categoriesError ? (
+                <p className="py-2 text-sm text-red-500">카테고리를 불러오지 못했어요. 새로고침 후 다시 시도해주세요.</p>
+              ) : (
+                <p className="py-2 text-sm text-gray-400">불러오는 중...</p>
+              )
             ) : (
               <div className="flex flex-wrap gap-3">
                 {orderedCategories.map((cat) => (

@@ -7,6 +7,8 @@ import { TransactionModalProvider } from "@/components/transaction/TransactionMo
 import { createClient } from "@/lib/supabase/server";
 import { getRemainingBudgetSummary } from "@/lib/budget-summary";
 import { getMyHouseholdId } from "@/lib/household";
+import { ensureRecurringForViewedMonth } from "@/lib/recurring";
+import { getCurrentMonthRange } from "@/lib/date";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -44,6 +46,13 @@ export default async function RootLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  // 사이드바는 모든 페이지에 항상 떠 있어서, 홈/전체내역/리포트처럼 이번 달 고정지출
+  // 자동생성을 거치는 화면을 거치지 않고 /settings나 /recurring으로 바로 들어와도
+  // "이번 달 남은 예산" 숫자가 고정지출 반영 전 상태로 보이지 않도록 여기서도 보장한다.
+  if (user) {
+    const { year, month } = getCurrentMonthRange();
+    await ensureRecurringForViewedMonth(supabase, { userId: user.id, year, month });
+  }
   const remainingBudget = user ? await getRemainingBudgetSummary(supabase) : null;
   const householdId = user ? await getMyHouseholdId(supabase) : null;
 

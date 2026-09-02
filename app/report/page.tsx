@@ -3,6 +3,7 @@ import { getCurrentMonthRange, getMonthRange, shiftMonth, parseMonthParam, forma
 import { formatMonthLabel } from "@/lib/format";
 import { ensureRecurringForViewedMonth } from "@/lib/recurring";
 import { groupExpensesByCategory, UNCATEGORIZED_CATEGORY_ID } from "@/lib/categoryAggregation";
+import { logQueryErrors } from "@/lib/supabase/logQueryErrors";
 import { LoginRequired } from "@/components/ui/LoginRequired";
 import { ReportView } from "@/components/report/ReportView";
 import type { CategoryIncreaseItem, MonthlyTrendPoint } from "@/types/report";
@@ -78,6 +79,8 @@ export default async function ReportPage({
       .lt("date", start)
       .returns<TrendRow[]>(),
   ]);
+
+  logQueryErrors("ReportPage", { thisMonth: thisMonthRes, lastMonth: lastMonthRes, trend: trendRes });
 
   const thisMonth = thisMonthRes.data ?? [];
   const lastMonth = lastMonthRes.data ?? [];

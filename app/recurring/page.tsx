@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMyHouseholdId } from "@/lib/household";
 import { LoginRequired } from "@/components/ui/LoginRequired";
 import { RecurringView } from "@/components/recurring/RecurringView";
+import { logQueryErrors } from "@/lib/supabase/logQueryErrors";
 import type { RecurringTemplateItem } from "@/types/recurring";
 import type { CategoryOption } from "@/lib/categories";
 
@@ -34,6 +35,8 @@ export default async function RecurringPage() {
     supabase.from("categories").select("id, name, icon, color").order("sort_order").returns<CategoryOption[]>(),
     getMyHouseholdId(supabase),
   ]);
+
+  logQueryErrors("RecurringPage", { templates: templatesRes, categories: categoriesRes });
 
   const templates: RecurringTemplateItem[] = (templatesRes.data ?? []).map((t) => ({
     id: t.id,

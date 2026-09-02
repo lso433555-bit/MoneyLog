@@ -5,6 +5,7 @@ import { ensureRecurringForViewedMonth } from "@/lib/recurring";
 import { getMyHouseholdId } from "@/lib/household";
 import { LoginRequired } from "@/components/ui/LoginRequired";
 import { TransactionsView } from "@/components/transactions/TransactionsView";
+import { logQueryErrors } from "@/lib/supabase/logQueryErrors";
 import type { TransactionListItem } from "@/types/transactions";
 
 interface TransactionRow {
@@ -58,6 +59,8 @@ export default async function TransactionsPage({
     supabase.from("household_members").select("user_id, display_name"),
     getMyHouseholdId(supabase),
   ]);
+
+  logQueryErrors("TransactionsPage", { transactions: transactionsRes, members: membersRes });
 
   // household 인원이 2명뿐일 때만 "누가 입력했는지"가 유용한 정보라 표시한다.
   const memberNameById = new Map((membersRes.data ?? []).map((m) => [m.user_id, m.display_name]));

@@ -7,7 +7,10 @@ import { getCurrentMonthRange } from "@/lib/date";
 export async function getRemainingBudgetSummary(supabase: SupabaseClient<Database>): Promise<number | null> {
   const { start, end } = getCurrentMonthRange();
 
-  const { data } = await supabase.from("transactions").select("amount, type").gte("date", start).lt("date", end);
+  const { data, error } = await supabase.from("transactions").select("amount, type").gte("date", start).lt("date", end);
+  if (error) {
+    console.error("[getRemainingBudgetSummary] 조회 실패:", error.message);
+  }
   if (!data) return null;
 
   const income = data.filter((t) => t.type === "income").reduce((sum, t) => sum + t.amount, 0);
