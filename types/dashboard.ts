@@ -28,11 +28,9 @@ export interface AssetItem {
   currentAmount: number;
 }
 
-export interface CategoryBudgetItem {
-  categoryId: string;
+export interface TopCategoryItem {
   category: DashboardCategoryInfo;
-  spent: number;
-  limit: number;
+  amount: number;
 }
 
 export interface DashboardData {
@@ -44,5 +42,5 @@ export interface DashboardData {
   fixedExpenses: FixedExpenseItem[];
   recentTransactions: RecentTransactionItem[];
   assets: AssetItem[];
-  categoryBudgets: CategoryBudgetItem[];
+  topCategories: TopCategoryItem[];
 }

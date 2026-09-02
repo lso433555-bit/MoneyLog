@@ -1,19 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentMonthRange } from "@/lib/date";
 import { getMyHouseholdId } from "@/lib/household";
 import { LoginRequired } from "@/components/ui/LoginRequired";
-import { BudgetSettingsView } from "@/components/settings/BudgetSettingsView";
 import { AssetManager } from "@/components/settings/AssetManager";
 import { InstallAppButton } from "@/components/settings/InstallAppButton";
 import { ExportDataButton } from "@/components/settings/ExportDataButton";
 import { AccountSection } from "@/components/settings/AccountSection";
-import type { CategoryOption } from "@/lib/categories";
 import type { AssetManagementItem } from "@/types/assets";
-
-interface BudgetRow {
-  category_id: string;
-  amount_limit: number;
-}
 
 interface AssetRow {
   id: string;
@@ -34,11 +26,7 @@ export default async function SettingsPage() {
     return <LoginRequired />;
   }
 
-  const { start, year, month } = getCurrentMonthRange();
-
-  const [categoriesRes, budgetsRes, assetsRes, householdId, memberRes] = await Promise.all([
-    supabase.from("categories").select("id, name, icon, color").order("sort_order").returns<CategoryOption[]>(),
-    supabase.from("budgets").select("category_id, amount_limit").eq("month", start).returns<BudgetRow[]>(),
+  const [assetsRes, householdId, memberRes] = await Promise.all([
     supabase
       .from("assets")
       .select("id, name, type, target_amount, current_amount, monthly_amount")
@@ -47,8 +35,6 @@ export default async function SettingsPage() {
     getMyHouseholdId(supabase),
     supabase.from("household_members").select("display_name").eq("user_id", user.id).single(),
   ]);
-
-  const initialBudgets = Object.fromEntries((budgetsRes.data ?? []).map((b) => [b.category_id, b.amount_limit]));
 
   const assets: AssetManagementItem[] = (assetsRes.data ?? []).map((a) => ({
     id: a.id,
@@ -62,14 +48,6 @@ export default async function SettingsPage() {
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-6 md:max-w-3xl xl:max-w-5xl">
       <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">설정</h1>
-
-      <BudgetSettingsView
-        monthLabel={`${year}년 ${month}월`}
-        month={start}
-        categories={categoriesRes.data ?? []}
-        initialBudgets={initialBudgets}
-        householdId={householdId}
-      />
 
       <AssetManager assets={assets} householdId={householdId} />
 

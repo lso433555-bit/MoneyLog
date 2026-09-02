@@ -1,4 +1,5 @@
-import { Landmark, PiggyBank } from "lucide-react";
+import Link from "next/link";
+import { Landmark, PiggyBank, Wallet } from "lucide-react";
 import { MoneyAmount } from "./MoneyAmount";
 import type { AssetItem } from "@/types/dashboard";
 
@@ -14,8 +15,6 @@ function computeProgress(asset: AssetItem): number {
 }
 
 export function AssetProgressCard({ assets }: { assets: AssetItem[] }) {
-  if (assets.length === 0) return null;
-
   // 순자산 = 적금 잔액 합 - 대출 잔액 합 (대출 currentAmount는 "남은 잔액"이라 그대로 부채로 뺀다).
   const netWorth = assets.reduce(
     (sum, a) => sum + (a.type === "savings" ? a.currentAmount : -a.currentAmount),
@@ -26,15 +25,26 @@ export function AssetProgressCard({ assets }: { assets: AssetItem[] }) {
     <section>
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300">자산 현황</h2>
-        <span className="text-xs text-gray-400">
-          순자산{" "}
-          <MoneyAmount
-            value={netWorth}
-            warnOnNegative
-            className="text-xs font-medium text-gray-600 dark:text-gray-400"
-          />
-        </span>
+        {assets.length > 0 && (
+          <span className="text-xs text-gray-400">
+            순자산{" "}
+            <MoneyAmount
+              value={netWorth}
+              warnOnNegative
+              className="text-xs font-medium text-gray-600 dark:text-gray-400"
+            />
+          </span>
+        )}
       </div>
+      {assets.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 py-8 text-center dark:border-gray-700">
+          <Wallet size={20} className="text-gray-300" />
+          <p className="text-sm text-gray-400">등록된 자산이 없어요.</p>
+          <Link href="/settings" className="text-xs font-medium text-gray-600 underline underline-offset-2 dark:text-gray-400">
+            + 자산 등록하기
+          </Link>
+        </div>
+      ) : (
       <div className="space-y-2">
         {assets.map((asset) => {
           const progress = computeProgress(asset);
@@ -74,6 +84,7 @@ export function AssetProgressCard({ assets }: { assets: AssetItem[] }) {
           );
         })}
       </div>
+      )}
     </section>
   );
 }

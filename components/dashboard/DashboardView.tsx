@@ -1,13 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { Plus, Target } from "lucide-react";
+import { Plus } from "lucide-react";
 import { BudgetSummaryCard } from "./BudgetSummaryCard";
 import { PerforatedDivider } from "./PerforatedDivider";
 import { FixedExpenseList } from "./FixedExpenseList";
 import { RecentTransactionList } from "./RecentTransactionList";
 import { AssetProgressCard } from "./AssetProgressCard";
-import { CategoryBudgetList } from "./CategoryBudgetList";
+import { TopCategoriesList } from "./TopCategoriesList";
 import { useTransactionModal } from "@/components/transaction/TransactionModalProvider";
 import type { DashboardData } from "@/types/dashboard";
 
@@ -27,30 +26,15 @@ export function DashboardView({ data }: { data: DashboardData }) {
       <PerforatedDivider />
 
       {/* 데스크탑(lg+)에서는 한눈에 훑어보는 2단 구성 — 왼쪽은 실제 내역(자주 바뀜),
-          오른쪽은 상태를 확인하는 요약 카드(예산 경고, 자산). 모바일은 그대로 세로 한 줄. */}
+          오른쪽은 상태를 확인하는 요약 카드(지출 랭킹, 자산). 모바일은 그대로 세로 한 줄. */}
       <div className="flex flex-col gap-6 lg:grid lg:grid-cols-3 lg:items-start lg:gap-8">
         <div className="flex flex-col gap-6 lg:col-span-2">
           <RecentTransactionList items={data.recentTransactions} />
           <FixedExpenseList items={data.fixedExpenses} />
         </div>
         <div className="flex flex-col gap-6">
-          {data.categoryBudgets.length === 0 && data.assets.length === 0 ? (
-            <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 p-6 text-center dark:border-gray-700">
-              <Target size={20} className="text-gray-300" />
-              <p className="text-sm text-gray-400">예산과 자산을 설정하면 여기에 현황이 표시돼요.</p>
-              <Link
-                href="/settings"
-                className="text-xs font-medium text-gray-600 underline underline-offset-2 dark:text-gray-400"
-              >
-                설정에서 등록하기
-              </Link>
-            </div>
-          ) : (
-            <>
-              <CategoryBudgetList items={data.categoryBudgets} />
-              <AssetProgressCard assets={data.assets} />
-            </>
-          )}
+          <TopCategoriesList items={data.topCategories} />
+          <AssetProgressCard assets={data.assets} />
         </div>
       </div>
 

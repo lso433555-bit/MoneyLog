@@ -23,12 +23,6 @@ interface TransactionRow {
   category: CategoryRef | null;
 }
 
-interface BudgetRow {
-  category_id: string;
-  amount_limit: number;
-  category: CategoryRef | null;
-}
-
 interface RecurringTemplateRow {
   id: string;
   name: string;
@@ -62,7 +56,7 @@ export default async function HomePage({
 
   await ensureRecurringForViewedMonth(supabase, { userId: user.id, year, month });
 
-  const [transactionsRes, recurringRes, assetsRes, membersRes, budgetsRes] = await Promise.all([
+  const [transactionsRes, recurringRes, assetsRes, membersRes] = await Promise.all([
     supabase
       .from("transactions")
       .select("id, amount, type, is_fixed, memo, date, category_id, user_id, category:categories(name, icon, color)")
@@ -82,11 +76,6 @@ export default async function HomePage({
       .select("id, name, type, target_amount, current_amount")
       .returns<AssetRow[]>(),
     supabase.from("household_members").select("user_id, display_name"),
-    supabase
-      .from("budgets")
-      .select("category_id, amount_limit, category:categories(name, icon, color)")
-      .eq("month", start)
-      .returns<BudgetRow[]>(),
   ]);
 
   const transactions = transactionsRes.data ?? [];
@@ -103,20 +92,21 @@ export default async function HomePage({
   const memberNameById = new Map((membersRes.data ?? []).map((m) => [m.user_id, m.display_name]));
   const showEnteredBy = memberNameById.size > 1;
 
-  const spentByCategory = new Map<string, number>();
+  // 카테고리별 예산(수동 한도 설정) 대신 "이번 달 어디에 많이 썼는지"를 바로 보여주는 랭킹 —
+  // 설정 없이도 즉시 유용해서 카테고리별 예산 기능을 대체하기로 함.
+  const categorySpend = new Map<string, { category: CategoryRef; amount: number }>();
   for (const t of transactions) {
-    if (t.type !== "expense" || !t.category_id) continue;
-    spentByCategory.set(t.category_id, (spentByCategory.get(t.category_id) ?? 0) + t.amount);
+    if (t.type !== "expense" || !t.category_id || !t.category) continue;
+    const existing = categorySpend.get(t.category_id);
+    if (existing) {
+      existing.amount += t.amount;
+    } else {
+      categorySpend.set(t.category_id, { category: t.category, amount: t.amount });
+    }
   }
-
-  const categoryBudgets = (budgetsRes.data ?? [])
-    .filter((b): b is BudgetRow & { category: CategoryRef } => b.category !== null)
-    .map((b) => ({
-      categoryId: b.category_id,
-      category: b.category,
-      spent: spentByCategory.get(b.category_id) ?? 0,
-      limit: b.amount_limit,
-    }));
+  const topCategories = Array.from(categorySpend.values())
+    .sort((a, b) => b.amount - a.amount)
+    .slice(0, 4);
 
   const data: DashboardData = {
     monthLabel: `${year}년 ${month}월`,
@@ -148,7 +138,7 @@ export default async function HomePage({
       targetAmount: a.target_amount,
       currentAmount: a.current_amount,
     })),
-    categoryBudgets,
+    topCategories,
   };
 
   return <DashboardView data={data} />;
