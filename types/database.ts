@@ -208,46 +208,6 @@ export interface Database {
           },
         ];
       };
-      budgets: {
-        Row: {
-          id: string;
-          household_id: string;
-          category_id: string;
-          month: string;
-          amount_limit: number;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          household_id: string;
-          category_id: string;
-          month: string;
-          amount_limit: number;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          household_id?: string;
-          category_id?: string;
-          month?: string;
-          amount_limit?: number;
-          created_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "budgets_household_id_fkey";
-            columns: ["household_id"];
-            referencedRelation: "households";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "budgets_category_id_fkey";
-            columns: ["category_id"];
-            referencedRelation: "categories";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
       assets: {
         Row: {
           id: string;
@@ -332,5 +292,4 @@ export type HouseholdMember = Tables<"household_members">;
 export type Category = Tables<"categories">;
 export type RecurringTemplate = Tables<"recurring_templates">;
 export type Transaction = Tables<"transactions">;
-export type Budget = Tables<"budgets">;
 export type Asset = Tables<"assets">;
