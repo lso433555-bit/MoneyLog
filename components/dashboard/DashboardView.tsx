@@ -1,6 +1,7 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import Link from "next/link";
+import { Plus, Target } from "lucide-react";
 import { BudgetSummaryCard } from "./BudgetSummaryCard";
 import { PerforatedDivider } from "./PerforatedDivider";
 import { FixedExpenseList } from "./FixedExpenseList";
@@ -33,8 +34,23 @@ export function DashboardView({ data }: { data: DashboardData }) {
           <FixedExpenseList items={data.fixedExpenses} />
         </div>
         <div className="flex flex-col gap-6">
-          <CategoryBudgetList items={data.categoryBudgets} />
-          <AssetProgressCard assets={data.assets} />
+          {data.categoryBudgets.length === 0 && data.assets.length === 0 ? (
+            <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 p-6 text-center dark:border-gray-700">
+              <Target size={20} className="text-gray-300" />
+              <p className="text-sm text-gray-400">예산과 자산을 설정하면 여기에 현황이 표시돼요.</p>
+              <Link
+                href="/settings"
+                className="text-xs font-medium text-gray-600 underline underline-offset-2 dark:text-gray-400"
+              >
+                설정에서 등록하기
+              </Link>
+            </div>
+          ) : (
+            <>
+              <CategoryBudgetList items={data.categoryBudgets} />
+              <AssetProgressCard assets={data.assets} />
+            </>
+          )}
         </div>
       </div>
 

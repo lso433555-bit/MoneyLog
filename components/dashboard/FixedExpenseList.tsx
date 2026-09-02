@@ -7,7 +7,17 @@ import type { FixedExpenseItem } from "@/types/dashboard";
 export function FixedExpenseList({ items }: { items: FixedExpenseItem[] }) {
   return (
     <section>
-      <h2 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">고정지출</h2>
+      <div className="mb-3 flex items-center gap-2">
+        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300">고정지출</h2>
+        {items.length > 0 && (
+          <Link
+            href="/recurring"
+            className="ml-auto rounded-full px-2 py-0.5 text-xs font-medium text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+          >
+            관리
+          </Link>
+        )}
+      </div>
       {items.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 py-8 text-center dark:border-gray-700">
           <Inbox size={20} className="text-gray-300" />

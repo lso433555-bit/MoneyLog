@@ -8,14 +8,16 @@ import type { RecentTransactionItem } from "@/types/dashboard";
 export function RecentTransactionList({ items }: { items: RecentTransactionItem[] }) {
   return (
     <section>
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-3 flex items-center gap-2">
         <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300">유동지출 · 최근</h2>
-        <Link
-          href="/transactions"
-          className="text-xs font-medium text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-        >
-          전체보기
-        </Link>
+        {items.length > 0 && (
+          <Link
+            href="/transactions"
+            className="ml-auto rounded-full px-2 py-0.5 text-xs font-medium text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+          >
+            전체보기
+          </Link>
+        )}
       </div>
       {items.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 py-8 text-center dark:border-gray-700">
